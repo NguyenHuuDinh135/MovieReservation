@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MovieReservation.Server.Domain.Entities;
 
-namespace MovieReservation.Server.Infrastructure.Contexts
+namespace MovieReservation.Server.Infrastructure.Data
 {
     public class MovieReservationDbContext : DbContext
     {
