@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using MovieReservation.Server.Infrastructure.Contexts;
+using MovieReservation.Server.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 

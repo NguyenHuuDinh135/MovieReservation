@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using MovieReservation.Server.Infrastructure.Contexts;
+using MovieReservation.Server.Infrastructure.Data;
 
 #nullable disable
 
-namespace MovieReservation.Server.Persistence.Migrations
+namespace MovieReservation.Server.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(MovieReservationDbContext))]
     partial class MovieReservationDbContextModelSnapshot : ModelSnapshot

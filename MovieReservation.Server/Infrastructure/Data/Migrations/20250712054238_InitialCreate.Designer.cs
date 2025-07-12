@@ -5,14 +5,14 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using MovieReservation.Server.Infrastructure.Contexts;
+using MovieReservation.Server.Infrastructure.Data;
 
 #nullable disable
 
-namespace MovieReservation.Server.Persistence.Migrations
+namespace MovieReservation.Server.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(MovieReservationDbContext))]
-    [Migration("20250710092130_InitialCreate")]
+    [Migration("20250712054238_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
