@@ -28,4 +28,13 @@
     </ProjectReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Domain\Constants\" />
+    <Folder Include="Domain\Events\" />
+    <Folder Include="Domain\Exceptions\" />
+    <Folder Include="Domain\ValueObjects\" />
+    <Folder Include="Infrastructure\Data\Configurations\" />
+    <Folder Include="Infrastructure\Data\Interceptors\" />
+  </ItemGroup>
+
 </Project>
