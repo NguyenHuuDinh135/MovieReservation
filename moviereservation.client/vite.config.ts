@@ -1,5 +1,3 @@
-import { fileURLToPath, URL } from 'node:url';
-
 import { defineConfig } from 'vite';
 import plugin from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
@@ -44,11 +42,16 @@ export default defineConfig({
     plugins: [plugin(), tailwindcss()],
     resolve: {
         alias: {
-            '@': fileURLToPath(new URL('./src', import.meta.url))
-        }
+            "@": path.resolve(__dirname, "./src"),
+        },
     },
     server: {
         proxy: {
+            '^/api': {
+                target,
+                secure: false,
+                changeOrigin: true
+            },
             '^/weatherforecast': {
                 target,
                 secure: false

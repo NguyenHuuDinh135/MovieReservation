@@ -1,17 +1,17 @@
-import React from 'react';
-import './index.css';
+﻿import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import LoginPage from "./pages/LoginPage";
+import OtpPage from "./pages/OtpPage";
+import WeatherForecast from "./pages/weather-forecast";
 
 function App() {
-
     return (
-        <div className="App flex flex-col items-center justify-center min-h-screen bg-gray-100">
-            <header className="App-header">
-                <h1>Welcome to Movie Reservation System</h1>
-                <p>
-                    This is a simple client application for managing movie reservations.
-                </p>
-            </header>
-        </div>
+        <Router>
+            <Routes>
+                <Route path="/" element={<LoginPage />} />
+                <Route path="/otp" element={<OtpPage />} />
+                <Route path="/weather" element={<WeatherForecast />} />
+            </Routes>
+        </Router>
     );
 }
 
