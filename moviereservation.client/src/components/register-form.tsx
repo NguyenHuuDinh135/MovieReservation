@@ -1,4 +1,4 @@
-﻿import { useState } from "react"
+import { useState } from "react"
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-export function LoginForm({
+export function RegisterForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
@@ -26,7 +26,7 @@ export function LoginForm({
         setLoading(true);
         setError("");
 
-        const res = await fetch("/api/Auth/login", {
+        const res = await fetch("/api/Auth/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, password }),
@@ -35,7 +35,7 @@ export function LoginForm({
         if (res.ok) {
             // chuyển sang OTP form, có thể truyền email qua state/router
             localStorage.setItem("login-email", email);
-            navigate("/otp"); // chuyển sang OTP page
+            navigate("/weather"); // chuyển sang weather page
         } else {
             const data = await res.json();
             setError(data.message || "Login failed");
@@ -94,12 +94,6 @@ export function LoginForm({
                 <div className="grid gap-3">
                   <div className="flex items-center">
                     <Label htmlFor="password">Password</Label>
-                    <a
-                      href="#"
-                      className="ml-auto text-sm underline-offset-4 hover:underline"
-                    >
-                      Forgot your password?
-                    </a>
                   </div>
                   <Input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} required />
                 </div>
@@ -107,13 +101,13 @@ export function LoginForm({
                   <p className="text-red-500 text-sm">{error}</p>
                 )}
                 <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? "Logging in..." : "Login"}
+                  {loading ? "Logging in..." : "Sign Up"}
                 </Button>
               </div>
               <div className="text-center text-sm">
-                Don&apos;t have an account?{" "}
-                <a href="/register" className="underline underline-offset-4">
-                  Sign up
+                Already have an account?{" "}
+                <a href="/" className="underline underline-offset-4">
+                  Login
                 </a>
               </div>
             </div>

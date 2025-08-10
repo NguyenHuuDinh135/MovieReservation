@@ -32,6 +32,7 @@ namespace MovieReservation.Server
             modelBuilder.Entity<Movie>()
                 .Property(m => m.Rating)
                 .HasPrecision(3, 1);
+         
         }
     }
 }

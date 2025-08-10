@@ -12,7 +12,7 @@ using MovieReservation.Server;
 namespace MovieReservation.Server.Data.Migrations
 {
     [DbContext(typeof(MovieReservationDbContext))]
-    [Migration("20250809073716_InitialCreate")]
+    [Migration("20250810110438_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
