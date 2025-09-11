@@ -1,18 +1,14 @@
-﻿import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import LoginPage from "./pages/LoginPage";
-import OtpPage from "./pages/OtpPage";
-import WeatherForecast from "./pages/weather-forecast";
+﻿
+import { SiteHeader } from "./components/layouts/site-header";
 
-import RegisterPage from "./pages/RegisterPage";
-
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 function App() {
     return (
         <Router>
+            <SiteHeader />
             <Routes>
-                <Route path="/" element={<LoginPage />} />
-                <Route path="/otp" element={<OtpPage />} />
-                <Route path="/weather" element={<WeatherForecast />} />
-                <Route path="/register" element={<RegisterPage />} />
+                <Route path="/" element={<h1>Home</h1>} />
+                <Route path="/about" element={<h1>About</h1>} />
             </Routes>
         </Router>
     );

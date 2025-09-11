@@ -1,10 +1,7 @@
-using MovieReservation.Server.Domain.Enums;
-
 namespace MovieReservation.Server.Domain.Entities
 {
-    public class Booking
+    public class Booking : BaseEntity
     {
-        public int Id { get; set; }
         public string UserId { get; set; }
         public int ShowId { get; set; }
         public string SeatRow { get; set; } = string.Empty;

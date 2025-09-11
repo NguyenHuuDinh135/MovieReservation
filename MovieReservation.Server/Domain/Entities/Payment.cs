@@ -3,9 +3,8 @@ namespace MovieReservation.Server.Domain.Entities
 {
     
 
-    public class Payment
+    public class Payment : BaseEntity
     {
-        public int Id { get; set; }
         public int Amount { get; set; }
         public DateTime PaymentDateTime { get; set; }
         public PaymentMethod Method { get; set; }

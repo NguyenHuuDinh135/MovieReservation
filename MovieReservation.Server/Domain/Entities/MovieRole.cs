@@ -3,7 +3,7 @@ namespace MovieReservation.Server.Domain.Entities
 {
     
 
-    public class MovieRole
+    public class MovieRole 
     {
         public int MovieId { get; set; }
         public int RoleId { get; set; }

@@ -7,13 +7,11 @@ namespace MovieReservation.Server.Domain.Entities
 {
     public class User : IdentityUser
     {
-
         public string Address { get; set; } = string.Empty;
         public string Contact { get; set; } = string.Empty;
-       // public UserRole Role { get; set; }
-
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime? UpdatedAt { get; set; }
         public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
         public ICollection<Payment> Payments { get; set; } = new List<Payment>();
-        //public OtpCode? OtpCode { get; set; }
     }
 }

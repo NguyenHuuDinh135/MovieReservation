@@ -3,9 +3,8 @@ using MovieReservation.Server.Domain.Enums;
 
 namespace MovieReservation.Server.Domain.Entities
 {
-    public class Show
+    public class Show : BaseEntity
     {
-        public int Id { get; set; }
         public TimeSpan StartTime { get; set; }
         public TimeSpan EndTime { get; set; }
         public DateTime Date { get; set; }

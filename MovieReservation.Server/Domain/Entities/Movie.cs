@@ -3,9 +3,8 @@ using MovieReservation.Server.Domain.Enums;
 
 namespace MovieReservation.Server.Domain.Entities
 {
-    public class Movie
+    public class Movie : BaseEntity
     {
-        public int Id { get; set; }
         public string Title { get; set; } = string.Empty;
         public string Summary { get; set; } = string.Empty;
         public int Year { get; set; }

@@ -1,6 +1,6 @@
 @MovieReservation.Server_HostAddress = http://localhost:5178
 
-GET {{MovieReservation.Server_HostAddress}}/weatherforecast/
+GET {{MovieReservation.Server_HostAddress}}/
 Accept: application/json
 
 ###
