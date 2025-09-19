@@ -1,4 +1,4 @@
-import type { Icons } from "@/components/icons"
+//import type { Icons } from "@/components/icons"
 
 export interface NavItem {
   title: string
@@ -6,7 +6,7 @@ export interface NavItem {
   active?: boolean
   disabled?: boolean
   external?: boolean
-  icon?: keyof typeof Icons
+  //icon?: keyof typeof Icons
   label?: string
   description?: string
 }

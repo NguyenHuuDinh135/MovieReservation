@@ -5,7 +5,7 @@ using MovieReservation.Server.Application.Auth.Commands.Login;
 using MovieReservation.Server.Application.Auth.Commands.RefreshToken;
 using MovieReservation.Server.Application.Auth.Commands.Register;
 using MovieReservation.Server.Application.Auth.Commands.VerifyOtp;
-
+using MovieReservation.Server.Application.Auth.Commands.Logout;
 namespace MovieReservation.Server.Controllers
 {
     [ApiController]
@@ -25,7 +25,7 @@ namespace MovieReservation.Server.Controllers
         {
             var result = await _mediator.Send(command);
             // result lúc này chỉ báo "OTP đã gửi", chưa có token
-            return Ok(new { message = result });
+            return Ok(new { message = result, email = command.Email });
         }
 
         [AllowAnonymous]
@@ -34,23 +34,65 @@ namespace MovieReservation.Server.Controllers
         {
             var result = await _mediator.Send(command);
             // result cũng chỉ báo "OTP đã gửi" hoặc "Đăng ký thành công"
-            return Ok(new { message = result });
+            return Ok(new { message = result, email = command.Email });
         }
 
-        [AllowAnonymous]
         [HttpPost("verify-otp")]
         public async Task<IActionResult> VerifyOtp([FromBody] VerifyOtpCommand command)
         {
-            var result = await _mediator.Send(command);
-
-            return Ok(new { message = result});
+            // try catch có thể được thêm vào để xử lý lỗi và trả về mã trạng thái phù hợp
+            try
+            {
+                var result = await _mediator.Send(command);
+                return Ok(new
+                {
+                    message = "Xác thực OTP thành công.",
+                    succeeded = true,
+                    data = result
+                });
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (ex) here
+                return BadRequest(new
+                {
+                    message = "Xác thực OTP thất bại.",
+                    succeeded = false,
+                    error = ex.Message
+                });
+            }
         }
 
         [HttpPost("refresh-token")]
         public async Task<IActionResult> Refresh([FromBody] RefreshTokenCommand command)
         {
-            var result = await _mediator.Send(command);
-            return Ok(new { message = result });
+            // try catch có thể được thêm vào để xử lý lỗi và trả về mã trạng thái phù hợp
+            try
+            {
+                var result = await _mediator.Send(command);
+                return Ok(new
+                {
+                    message = "Làm mới token thành công.",
+                    succeeded = true,
+                    data = result
+                });
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (ex) here
+                return BadRequest(new
+                {
+                    message = "Làm mới token thất bại.",
+                    succeeded = false,
+                    error = ex.Message
+                });
+            }
+        }
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout([FromBody] LogoutCommand command)
+        {
+            await _mediator.Send(command);
+            return Ok(new { message = "Logged out successfully" });
         }
     }
 }

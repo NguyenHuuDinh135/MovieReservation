@@ -113,3 +113,15 @@
 //   type: 'Missing' | 'Blocked';
 //   theater?: Theater;
 // };
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface ResultResponse<T = any> {
+  succeeded: boolean
+  errors: string[]
+  data: T | null
+}
+
+export type TokenData = {
+  accessToken: string
+  expiresIn: number
+}

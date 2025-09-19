@@ -1,14 +1,26 @@
-﻿using Azure.Core;
-using MediatR;
+﻿using MediatR;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+
 namespace MovieReservation.Server.Application.Auth.Commands.VerifyOtp
 {
-    public record VerifyOtpCommand : IRequest<Result>
+    // DTO class để đảm bảo serialization ổn định
+    public class TokenResponseDto
+    {
+        public string Username { get; set; } = string.Empty;
+
+        public string Email { get; set; } = string.Empty;
+        public string AccessToken { get; set; } = string.Empty;
+        public int ExpiresIn { get; set; }
+    }
+
+    public record VerifyOtpCommand : IRequest<TokenResponseDto>
     {
         public string Email { get; set; } = string.Empty;
         public string OtpCode { get; set; } = string.Empty;
     }
 
-    public class VerifyOtpCommandHandler : IRequestHandler<VerifyOtpCommand, Result>
+    public class VerifyOtpCommandHandler : IRequestHandler<VerifyOtpCommand, TokenResponseDto>
     {
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
@@ -30,15 +42,15 @@ namespace MovieReservation.Server.Application.Auth.Commands.VerifyOtp
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<Result> Handle(VerifyOtpCommand request, CancellationToken cancellationToken)
+        public async Task<TokenResponseDto> Handle(VerifyOtpCommand request, CancellationToken cancellationToken)
         {
             var user = await _userManager.FindByEmailAsync(request.Email);
             if (user == null)
-                return Result.Failure(new[] { "Tài khoản không tồn tại." });
-
+                throw new Exception("Tài khoản không tồn tại.");
+            //username
             var storedOtp = await _redisService.GetAsync<string>($"otp:{user.Id}");
             if (storedOtp != request.OtpCode)
-                return Result.Failure(new[] { "OTP không hợp lệ." });
+                throw new Exception("OTP không hợp lệ.");
 
             await _redisService.RemoveAsync($"otp:{user.Id}");
 
@@ -67,8 +79,25 @@ namespace MovieReservation.Server.Application.Auth.Commands.VerifyOtp
                     TimeSpan.FromDays(_jwtService.RefreshTokenDays));
             }
 
+            // Cookie options
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = DateTime.UtcNow.AddDays(_jwtService.RefreshTokenDays),
+                SameSite = SameSiteMode.Strict,
+                Secure = true
+            };
 
-            return Result.Success();
+            _httpContextAccessor.HttpContext?.Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
+            
+            // Trả về DTO trực tiếp
+            return new TokenResponseDto
+            {
+                Username = user.UserName ?? string.Empty,
+                Email = user.Email ?? string.Empty,
+                AccessToken = accessToken,
+                ExpiresIn = _jwtService.AccessTokenMinutes
+            };
         }
     }
 }

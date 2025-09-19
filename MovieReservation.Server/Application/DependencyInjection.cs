@@ -4,6 +4,7 @@ using MovieReservation.Server.Application.Auth.Commands.Login;
 using MovieReservation.Server.Application.Auth.Commands.Register;
 using MovieReservation.Server.Application.Auth.Commands.VerifyOtp;
 using MovieReservation.Server.Application.Auth.Commands.RefreshToken;
+using MovieReservation.Server.Application.Auth.Commands.Logout;
 using System.Reflection;
 
 namespace MovieReservation.Server.Application
@@ -17,6 +18,7 @@ namespace MovieReservation.Server.Application
             builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(RegisterCommandHandler).Assembly));
             builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(VerifyOtpCommandHandler).Assembly));
             builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(RefreshTokenCommandHandler).Assembly));
+            builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(LogoutCommandHandler).Assembly));
             builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
             builder.Services.AddMediatR(cfg => {

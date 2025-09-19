@@ -14,9 +14,6 @@ namespace MovieReservation.Server.Infrastructure
         {
             builder.Services.AddDbContext<MovieReservationDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-            // Register Redis connection abortConnect=false
-            //"Redis": {
-            //    "ConnectionString": "localhost:6379"
             builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
             {
                 var configuration = ConfigurationOptions.Parse(builder.Configuration.GetValue<string>("Redis:ConnectionString"), true);
