@@ -41,7 +41,7 @@ export function RegisterForm({
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        name: data.name,
+        userName: data.name,
         email: data.email,
         password: data.password,
         callbackUrl: redirectTo || paths.home.path,
@@ -55,13 +55,14 @@ export function RegisterForm({
             onClick: () => console.log("Undo"),
           }
         })
+    setIsLoading(false)
     navigate(paths.auth.otp.getHref(), {
       state: {
         email: registerResult.email,
         from: location.state?.from,
       },
     })
-    setIsLoading(false)
+    
   }
 
 
