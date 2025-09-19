@@ -90,7 +90,6 @@ export function LoginForm({
                 id="email"
                 type="email"
                 placeholder="m@example.com"
-                value="dinhknd3@gmail.com"
                 disabled={isLoading || isGoogleLoading}
                 {...register("email")}
                 required
@@ -107,7 +106,6 @@ export function LoginForm({
                 id="password"
                 type="password"
                 placeholder="********"
-                value="User@123"
                 disabled={isLoading || isGoogleLoading}
                 {...register("password")}
                 required
