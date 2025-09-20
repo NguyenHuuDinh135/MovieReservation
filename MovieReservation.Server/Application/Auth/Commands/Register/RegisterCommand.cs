@@ -36,7 +36,7 @@ namespace MovieReservation.Server.Application.Auth.Commands.Register
             var existing = await _userManager.FindByEmailAsync(request.Email);
             if (existing != null)
                 throw new Exception("Email đã tồn tại.");
-
+            //
             var user = new User
             {
                 UserName = request.UserName,

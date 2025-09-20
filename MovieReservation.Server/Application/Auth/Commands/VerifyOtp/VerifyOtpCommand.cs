@@ -53,6 +53,13 @@ namespace MovieReservation.Server.Application.Auth.Commands.VerifyOtp
                 throw new Exception("OTP không hợp lệ.");
 
             await _redisService.RemoveAsync($"otp:{user.Id}");
+            if (!user.EmailConfirmed)
+            {
+                user.EmailConfirmed = true;
+                var updateResult = await _userManager.UpdateAsync(user);
+                if (!updateResult.Succeeded)
+                    throw new Exception($"Không thể xác thực email: {string.Join(", ", updateResult.Errors.Select(e => e.Description))}");
+            }
 
             string accessToken, refreshToken;
 
