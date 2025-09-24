@@ -30,11 +30,11 @@ namespace MovieReservation.Server.Controllers
             return await Sender.Send(new GetBookingByIdQuery { Id = id });
         }
 
-        // [HttpPost]
-        // public async Task<ActionResult> createBooking(CreateBookingCommand command)
-        // {
-        //     return await Sender.Send(command);
-        // }
+        [HttpPost]
+        public async Task<ActionResult<int>> createBooking(CreateBookingCommand command)
+        {
+            return await Sender.Send(command);
+        }
     }
 }
 

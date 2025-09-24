@@ -98,9 +98,11 @@ namespace MovieReservation.Server.Infrastructure.Data.Repositories
             .SingleOrDefaultAsync(b => b.Id == id, cancellationToken);
         }
 
-        public Task<int> CreateBookingAsync(Booking booking, CancellationToken cancellationToken)
+        public async Task<int> CreateBookingAsync(Booking booking, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            await _dbContext.Bookings.AddAsync(booking, cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+            return booking.Id;
         }
 
         public Task<Unit> DeleteBookingAsync(int id)

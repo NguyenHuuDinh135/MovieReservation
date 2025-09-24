@@ -10,6 +10,7 @@ using MovieReservation.Server.Application.Bookings.Queries.GetBookings;
 using MovieReservation.Server.Application.Movies.Queries.GetMovies;
 using MovieReservation.Server.Application.Common.Mappings;
 using MovieReservation.Server.Application.Bookings.Queries.GetBookingById;
+using MovieReservation.Server.Application.Bookings.Commands.CreateBooking;
 
 namespace MovieReservation.Server.Application
 {
@@ -28,6 +29,7 @@ namespace MovieReservation.Server.Application
             // Booking Queries
             builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetBookingsQueryHandler).Assembly));
             builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetBookingByIdQueryHandler).Assembly));
+            builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateBookingCommandHandler).Assembly));
 
             // Movie Queries
             builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetMoviesQueryHandler).Assembly));
