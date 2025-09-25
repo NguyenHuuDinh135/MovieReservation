@@ -20,8 +20,8 @@ namespace MovieReservation.Server.Controllers
     public class BookingsController : BaseController
     {
 
-        // [Authorize(Roles = "Admin")]
-        [HttpGet]
+        [Authorize(Roles = "Admin")] 
+        [HttpGet("get-all")]
         public async Task<ActionResult<List<GetBookingsQueryResponse>>> GetAllBookings()
         {
             try
@@ -39,7 +39,8 @@ namespace MovieReservation.Server.Controllers
             }
         }
 
-        [HttpGet("{id:int}")]
+        [Authorize(Roles = "Admin,User")]
+        [HttpGet("get-by-id/{id:int}")]
         public async Task<ActionResult<GetBookingByIdQueryResponse>> GetBookingById(int id)
         {
             try
@@ -61,7 +62,8 @@ namespace MovieReservation.Server.Controllers
             }
         }
 
-        [HttpPost]
+        [Authorize(Roles = "Admin,User")]
+        [HttpPost("create")]
         public async Task<ActionResult<int>> CreateBooking(CreateBookingCommand command)
         {
             try
@@ -78,8 +80,9 @@ namespace MovieReservation.Server.Controllers
                 return StatusCode(500, new { message = "An error occurred", detail = ex.Message });
             }
         }
-
-        [HttpPut]
+        
+        [Authorize(Roles = "Admin,User")]
+        [HttpPut("update")]
         public async Task<ActionResult<Unit>> UpdateBooking(UpdateBookingCommand command)
         {
             try
@@ -101,7 +104,8 @@ namespace MovieReservation.Server.Controllers
             }
         }
 
-        [HttpDelete("{id:int}")]
+        [Authorize(Roles = "Admin,User")]
+        [HttpDelete("delete/{id:int}")]
         public async Task<ActionResult> DeleteBooking(int id)
         {
             try
