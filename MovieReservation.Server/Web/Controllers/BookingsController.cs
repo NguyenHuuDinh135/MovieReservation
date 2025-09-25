@@ -24,34 +24,59 @@ namespace MovieReservation.Server.Controllers
         [HttpGet]
         public async Task<ActionResult<List<GetBookingsQueryResponse>>> GetAllBookings()
         {
-            var result = await Sender.Send(new GetBookingsQuery());
-            if (result == null)
+            try
             {
-                return NotFound(new { Message = "No bookings found." });
+                var result = await Sender.Send(new GetBookingsQuery());
+                return Ok(result);
             }
-            return Ok(result);
+            catch (NotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred", detail = ex.Message });
+            }
         }
 
         [HttpGet("{id:int}")]
         public async Task<ActionResult<GetBookingByIdQueryResponse>> GetBookingById(int id)
         {
-            var result = await Sender.Send(new GetBookingByIdQuery { Id = id });
-            if (result == null)
+            try
             {
-                return NotFound(new { Message = $"Booking with ID {id} not found." });
+                var result = await Sender.Send(new GetBookingByIdQuery { Id = id });
+                return Ok(result);
             }
-            return Ok(result);
+            catch (NotFoundException ex) // custom exception
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (ConflictException ex)
+            {
+                return Conflict(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred", detail = ex.Message });
+            }
         }
 
         [HttpPost]
         public async Task<ActionResult<int>> CreateBooking(CreateBookingCommand command)
         {
-            var result = await Sender.Send(command);
-            if (result == 0)
+            try
             {
-                return BadRequest(new { Message = "Failed to create booking." });
+                var result = await Sender.Send(command);
+                return Ok(result);
             }
-            return CreatedAtAction(nameof(GetBookingById), new { id = result }, result);
+            catch (ConflictException ex)
+            {
+                return Conflict(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred", detail = ex.Message });
+            }
         }
 
         [HttpPut]
@@ -62,11 +87,11 @@ namespace MovieReservation.Server.Controllers
                 await Sender.Send(command);
                 return NoContent(); // 204
             }
-            catch (NotFoundException ex) // custom exception
+            catch (NotFoundException ex) 
             {
                 return NotFound(new { message = ex.Message });
             }
-            catch (ConflictException ex) // custom exception
+            catch (ConflictException ex)
             {
                 return Conflict(new { message = ex.Message });
             }
