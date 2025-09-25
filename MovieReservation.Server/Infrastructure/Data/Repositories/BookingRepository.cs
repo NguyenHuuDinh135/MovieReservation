@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MovieReservation.Server.Application.Common.Interfaces;
+using MovieReservation.Server.Application.Features.Bookings.Commands.UpdateBooking;
 using MovieReservation.Server.Domain.Entities;
 
 namespace MovieReservation.Server.Infrastructure.Data.Repositories
@@ -105,14 +106,17 @@ namespace MovieReservation.Server.Infrastructure.Data.Repositories
             return booking.Id;
         }
 
-        public Task<Unit> DeleteBookingAsync(int id)
+        public async Task<Unit> UpdateBookingAsync(Booking booking, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            await _dbContext.SaveChangesAsync(cancellationToken);
+            return Unit.Value;
         }
 
-        public Task<Unit> UpdateBookingAsync(Booking booking)
+        public async Task<Unit> DeleteBookingAsync(Booking booking, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            _dbContext.Bookings.Remove(booking);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+            return Unit.Value;  
         }
    }
 }

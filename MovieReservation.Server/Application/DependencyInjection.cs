@@ -11,6 +11,8 @@ using MovieReservation.Server.Application.Movies.Queries.GetMovies;
 using MovieReservation.Server.Application.Common.Mappings;
 using MovieReservation.Server.Application.Bookings.Queries.GetBookingById;
 using MovieReservation.Server.Application.Bookings.Commands.CreateBooking;
+using MovieReservation.Server.Application.Features.Bookings.Commands.UpdateBooking;
+using MovieReservation.Server.Application.Bookings.Commands.DeleteBooking;
 
 namespace MovieReservation.Server.Application
 {
@@ -30,6 +32,8 @@ namespace MovieReservation.Server.Application
             builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetBookingsQueryHandler).Assembly));
             builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetBookingByIdQueryHandler).Assembly));
             builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateBookingCommandHandler).Assembly));
+            builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(UpdateBookingCommandHandler).Assembly));
+            builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(DeleteBookingCommandHandler).Assembly));
 
             // Movie Queries
             builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetMoviesQueryHandler).Assembly));

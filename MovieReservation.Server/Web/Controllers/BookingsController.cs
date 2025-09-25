@@ -9,6 +9,9 @@ using MovieReservation.Server.Application.Bookings.Queries.GetBookings;
 using MovieReservation.Server.Application.Movies.Queries.GetMovies;
 using MovieReservation.Server.Application.Bookings.Queries.GetBookingById;
 using MovieReservation.Server.Application.Features.Bookings.Commands.CreateBooking;
+using MovieReservation.Server.Application.Features.Bookings.Commands.UpdateBooking;
+using MovieReservation.Server.Application.Bookings.Commands.DeleteBooking;
+using MovieReservation.Server.Application.Common.Exceptions;
 
 namespace MovieReservation.Server.Controllers
 {
@@ -19,21 +22,80 @@ namespace MovieReservation.Server.Controllers
 
         // [Authorize(Roles = "Admin")]
         [HttpGet]
-        public async Task<ActionResult<List<GetBookingsQueryResponse>>> getAllBookings()
+        public async Task<ActionResult<List<GetBookingsQueryResponse>>> GetAllBookings()
         {
-            return await Sender.Send(new GetBookingsQuery());
+            var result = await Sender.Send(new GetBookingsQuery());
+            if (result == null)
+            {
+                return NotFound(new { Message = "No bookings found." });
+            }
+            return Ok(result);
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<GetBookingByIdQueryResponse>> getBookingById(int id)
+        public async Task<ActionResult<GetBookingByIdQueryResponse>> GetBookingById(int id)
         {
-            return await Sender.Send(new GetBookingByIdQuery { Id = id });
+            var result = await Sender.Send(new GetBookingByIdQuery { Id = id });
+            if (result == null)
+            {
+                return NotFound(new { Message = $"Booking with ID {id} not found." });
+            }
+            return Ok(result);
         }
 
         [HttpPost]
-        public async Task<ActionResult<int>> createBooking(CreateBookingCommand command)
+        public async Task<ActionResult<int>> CreateBooking(CreateBookingCommand command)
         {
-            return await Sender.Send(command);
+            var result = await Sender.Send(command);
+            if (result == 0)
+            {
+                return BadRequest(new { Message = "Failed to create booking." });
+            }
+            return CreatedAtAction(nameof(GetBookingById), new { id = result }, result);
+        }
+
+        [HttpPut]
+        public async Task<ActionResult<Unit>> UpdateBooking(UpdateBookingCommand command)
+        {
+            try
+            {
+                await Sender.Send(command);
+                return NoContent(); // 204
+            }
+            catch (NotFoundException ex) // custom exception
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (ConflictException ex) // custom exception
+            {
+                return Conflict(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred", detail = ex.Message });
+            }
+        }
+
+        [HttpDelete("{id:int}")]
+        public async Task<ActionResult> DeleteBooking(int id)
+        {
+            try
+            {
+                await Sender.Send(new DeleteBookingCommand { Id = id });
+                return NoContent(); // 204
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (ConflictException ex)
+            {
+                return Conflict(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred", detail = ex.Message });
+            }
         }
     }
 }
