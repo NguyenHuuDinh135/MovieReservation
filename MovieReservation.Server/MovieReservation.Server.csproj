@@ -67,7 +67,7 @@
     <Folder Include="Application\Auth\Queries\" />
     <Folder Include="Application\Common\Exceptions\" />
     <Folder Include="Application\Common\Behaviours\" />
-    <Folder Include="Application\Common\Mapping\" />
+    <Folder Include="Application\Common\Mappings\" />
     <Folder Include="Infrastructure\Caching\" />
   </ItemGroup>
 
