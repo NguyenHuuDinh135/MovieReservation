@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using MovieReservation.Server.Application.Common.Interfaces;
+using MovieReservation.Server.Infrastructure.Data.Repositories;
 using MovieReservation.Server.Infrastructure.Services;
 using StackExchange.Redis;
 
@@ -63,6 +64,9 @@ namespace MovieReservation.Server.Infrastructure
             builder.Services.AddTransient<IJwtService, JwtService>();
             builder.Services.AddTransient<IEmailService, EmailService>();
             builder.Services.AddTransient<IRedisService, RedisService>();
+            
+            // Repository
+            builder.Services.AddTransient<IBookingRepository, BookingRepository>();
 
             // Cookie settings cho Refresh Token
             builder.Services.ConfigureApplicationCookie(options =>
