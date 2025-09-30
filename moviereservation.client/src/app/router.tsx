@@ -6,7 +6,7 @@ import { RouterProvider } from 'react-router/dom';
 import {
   default as AppRoot,
   ErrorBoundary as AppRootErrorBoundary
-} from './routes/app/root';
+} from './routes/app/layout';
   
 import { paths } from '@/config/paths';
 
@@ -25,7 +25,7 @@ export const createAppRouter = (queryClient: QueryClient) =>
   createBrowserRouter([
     {
       path: paths.home.path,
-      lazy: () => import('./routes/app/root').then(convert(queryClient)),
+      lazy: () => import('./routes/app/layout').then(convert(queryClient)),
     },
     {
       path: paths.auth.register.path,
@@ -40,15 +40,13 @@ export const createAppRouter = (queryClient: QueryClient) =>
       lazy: () => import('./routes/auth/otp/page').then(convert(queryClient)),
     },
     {
-      path: paths.app.root.path,
-      element: (
-        <AppRoot />
-      ),
+      path: paths.home.path,
+      element: <AppRoot children />,
       ErrorBoundary: AppRootErrorBoundary,
       children: [
         {
           index: true,
-          lazy: () => import('./').then(convert(queryClient)),
+          lazy: () => import('./routes/app/root/page').then(convert(queryClient)),
         }
       ]
     }

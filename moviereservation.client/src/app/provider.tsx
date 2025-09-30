@@ -6,12 +6,11 @@ import { queryConfig } from '@/lib/react-query';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 // import { cn } from "@/lib/utils";
 // import { META_THEME_COLORS } from "@/config/site"
-// import { Toaster } from "sonner";
-// import { ThemeProvider } from "@/components/theme-provider";
-// import { LayoutProvider } from "@/hooks/use-layout";
-// import { ActiveThemeProvider } from "@/components/active-theme";
-// import { TailwindIndicator } from "@/components/tailwind-indicator";
-// import { fontVariables } from "@/lib/fonts";
+import { Toaster } from "sonner";
+import { ThemeProvider } from "@/components/theme-provider";
+import { LayoutProvider } from "@/hooks/use-layout";
+import { ActiveThemeProvider } from "@/components/active-theme";
+import { TailwindIndicator } from "@/components/tailwind-indicator";
 type AppProviderProps = {
   children: React.ReactNode;
 };
@@ -40,7 +39,15 @@ export const AppProvider = ({ children }: AppProviderProps) =>{
           >
             <QueryClientProvider client={queryClient}>
               {import.meta.env.DEV && <ReactQueryDevtools />}
-                  {children}
+              <ThemeProvider>
+                <LayoutProvider>
+                  <ActiveThemeProvider>
+                    {children}
+                    <TailwindIndicator />
+                    <Toaster position="top-center" />
+                  </ActiveThemeProvider>
+                </LayoutProvider>
+              </ThemeProvider>
             </QueryClientProvider>
 
           </ErrorBoundary>
