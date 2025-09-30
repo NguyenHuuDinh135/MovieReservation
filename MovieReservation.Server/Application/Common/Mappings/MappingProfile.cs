@@ -18,7 +18,8 @@ namespace MovieReservation.Server.Application.Common.Mappings
             CreateMap<Booking, GetBookingsQueryResponse>();
             CreateMap<Booking, GetBookingByIdQueryResponse>();
             CreateMap<CreateBookingCommand, Booking>();
-            CreateMap<UpdateBookingCommand, Booking>();
+            CreateMap<UpdateBookingCommand, Booking>()
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
             CreateMap<DeleteBookingCommand, Booking>();
         }
     }

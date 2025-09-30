@@ -8,6 +8,7 @@ using MovieReservation.Server.Infrastructure.Services;
 using MovieReservation.Server.Web.Middleware;
 using StackExchange.Redis;
 using System;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,11 +21,15 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
         options.JsonSerializerOptions.WriteIndented = true;
         // Cấu hình để serialize enum dưới dạng string thay vì số
-        // options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+    {
+        // Thêm dòng này để Swagger hiển thị enum dưới dạng string
+        c.UseInlineDefinitionsForEnums();
+    });
 
 // // Cấu hình CORS
 // builder.Services.AddCors(options =>

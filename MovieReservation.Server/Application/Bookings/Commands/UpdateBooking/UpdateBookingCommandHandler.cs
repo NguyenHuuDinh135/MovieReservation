@@ -21,17 +21,21 @@ namespace MovieReservation.Server.Application.Features.Bookings.Commands.UpdateB
 
         public async Task<Unit> Handle(UpdateBookingCommand request, CancellationToken cancellationToken)
         {
-            var booking = await _bookingRepository.GetBookingByIdAsync(request.Id, cancellationToken);
+            var booking = await _bookingRepository.GetBookingEntityAsync(request.Id, cancellationToken);
 
             if (booking == null)
             {
                 throw new Exception($"Booking not found: {request.Id}");
             }
 
-            if (booking.Status == request.Status || booking.SeatRow == request.SeatRow || booking.SeatNumber == request.SeatNumber || booking.Price == request.Price)
-            {
-                await _bookingRepository.UpdateBookingAsync(_mapper.Map<Booking>(request), cancellationToken);
-            }
+            Console.WriteLine($"{request.Id}, {request.UserId}, {request.SeatRow}, {request.SeatNumber}, {request.Price}, {request.Status}");
+            // Cập nhật trực tiếp
+            booking.UserId = request.UserId ?? booking.UserId;
+            booking.SeatRow = request.SeatRow ?? booking.SeatRow;
+            booking.SeatNumber = request.SeatNumber ?? booking.SeatNumber;
+            booking.Price = request.Price ?? booking.Price;
+            booking.Status = request.Status ?? booking.Status;
+            await _bookingRepository.UpdateBookingAsync(booking, cancellationToken);
 
             return Unit.Value;
         }

@@ -10,6 +10,7 @@ namespace MovieReservation.Server.Application.Common.Interfaces
     {
         Task<List<Booking>> GetAllBookingsAsync(CancellationToken cancellationToken);
         Task<Booking> GetBookingByIdAsync(int id, CancellationToken cancellationToken);
+        Task<Booking> GetBookingEntityAsync(int id, CancellationToken cancellationToken);
         Task<int> CreateBookingAsync(Booking booking, CancellationToken cancellationToken);
         Task<Unit> UpdateBookingAsync(Booking booking, CancellationToken cancellationToken);
         Task<Unit> DeleteBookingAsync(Booking booking, CancellationToken cancellationToken);
