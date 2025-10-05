@@ -5,20 +5,25 @@ using System.Linq;
 using System.Threading.Tasks;
 namespace MovieReservation.Server.Infrastructure
 {
+    // class seeder data
     public static class InitialiserExtensions
-    {
+    {   
+        // thêm seeding
         public static void AddAsyncSeeding(this DbContextOptionsBuilder builder, IServiceProvider serviceProvider)
         {
             builder.UseAsyncSeeding(async (context, _, ct) =>
             {
+                // Lấy instance của lớp khởi tạo DB từ DI Container
                 var initialiser = serviceProvider.GetRequiredService<MovieReservationDbContextInitialiser>();
 
                 await initialiser.SeedAsync();
             });
         }
 
+        // khởi tạo và cập nhật DB khi run
         public static async Task InitialiseDatabaseAsync(this WebApplication app)
         {
+            // Tạo scope để lấy các service cần thiết từ Dependency Injection
             using var scope = app.Services.CreateScope();
 
             var initialiser = scope.ServiceProvider.GetRequiredService<MovieReservationDbContextInitialiser>();
@@ -28,11 +33,12 @@ namespace MovieReservation.Server.Infrastructure
     }
     public class MovieReservationDbContextInitialiser
     {
-        private readonly ILogger<MovieReservationDbContextInitialiser> _logger;
-        private readonly MovieReservationDbContext _context;
-        private readonly UserManager<User> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly ILogger<MovieReservationDbContextInitialiser> _logger; // Dùng để log lỗi hoặc trạng thái
+        private readonly MovieReservationDbContext _context; //Truy cập DB
+        private readonly UserManager<User> _userManager; // Quản lý người dùng
+        private readonly RoleManager<IdentityRole> _roleManager; // Quản lý role
 
+        // nhận dependency thông qua DI
         public MovieReservationDbContextInitialiser(ILogger<MovieReservationDbContextInitialiser> logger, MovieReservationDbContext context, UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
         {
             _logger = logger;
@@ -127,6 +133,7 @@ namespace MovieReservation.Server.Infrastructure
             }
 
             // Seed Genres
+            // Nếu rỗng thì thêm
             if (!_context.Genres.Any())
             {
                 _context.Genres.AddRange(
