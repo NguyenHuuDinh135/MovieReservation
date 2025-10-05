@@ -1,6 +1,60 @@
 @MovieReservation.Server_HostAddress = http://localhost:5178
 
-GET {{MovieReservation.Server_HostAddress}}/
+
+
+###
+
+# ===========================================
+# BOOKINGS API ENDPOINTS
+# ===========================================
+
+# Get all bookings
+GET http://localhost:5178/api/Bookings/get-all
+Accept: application/json
+
+###
+
+# Get booking by ID
+GET http://localhost:5178/api/bookings/get-by-id/1
+Accept: application/json
+
+###
+
+# Create new booking
+POST http://localhost:5178/api/bookings/create
+Content-Type: application/json
+
+{
+  "userId": "2b6dfb56-8a4d-4df7-8b9f-b2d0a18bb58e",
+  "showId": 0,
+  "seatRow": "",
+  "seatNumber": 0,
+  "price": 0,
+  "status": 0,
+  "bookingDateTime": ""
+}
+
+###
+
+# Update booking
+PUT http://localhost:5178/api/bookings/update
+Content-Type: application/json
+
+{
+  "id": 0,
+  "userId": "2b6dfb56-8a4d-4df7-8b9f-b2d0a18bb58e",
+  "showId": 0,
+  "seatRow": "",
+  "seatNumber": 0,
+  "price": 0,
+  "status": "",
+  "bookingDateTime": "2024-01-15T19:30:00Z"
+}
+
+###
+
+# Delete booking
+DELETE http://localhost:5178/api/bookings/delete/1
 Accept: application/json
 
 ###
