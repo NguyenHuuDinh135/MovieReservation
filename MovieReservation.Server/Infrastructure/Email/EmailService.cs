@@ -14,11 +14,11 @@ public class EmailService : IEmailService
     {
         _configuration = configuration;
     }
-
-    public async Task SendEmailAsync(EmailDto emailDto, CancellationToken ct = default)
-    {
         // emailDto: thông tin người gửi
         // ct: token để hủy
+    public async Task SendEmailAsync(EmailDto emailDto, CancellationToken ct = default)
+    {
+        // tạo smtpclient kết nối server
         var smtpClient = new SmtpClient(_configuration["EmailSettings:SmtpServer"])
         {
             Port = int.Parse(_configuration["EmailSettings:SmtpPort"]),
@@ -27,7 +27,7 @@ public class EmailService : IEmailService
                 _configuration["EmailSettings:Password"]),
             EnableSsl = true,
         };
-
+        // tạo nội dung mail
         var mailMessage = new MailMessage
         {
             From = new MailAddress(_configuration["EmailSettings:SenderEmail"],
@@ -37,8 +37,10 @@ public class EmailService : IEmailService
             IsBodyHtml = true,
         };
 
+        //thêm người nhận
         mailMessage.To.Add(emailDto.ToEmail);
 
+        //Gửi
         await smtpClient.SendMailAsync(mailMessage);
     }
     public string GenerateOtp()
