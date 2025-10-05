@@ -4,6 +4,7 @@ namespace MovieReservation.Server.Infrastructure
 {
     public class MovieReservationDbContext : IdentityDbContext<User>
     {
+        // Constructor: nhận các tùy chọn cấu hình kết nối từ Dependency Injection
         public MovieReservationDbContext(DbContextOptions<MovieReservationDbContext> options)
             : base(options) { }
         public DbSet<Booking> Bookings { get; set; }
@@ -18,6 +19,7 @@ namespace MovieReservation.Server.Infrastructure
         public DbSet<Payment> Payments { get; set; }
         //public DbSet<OtpCode> OtpCodes { get; set; }
 
+        // Ghi đè phương thức OnModelCreating để tùy chỉnh cấu trúc bảng, khóa chính/phụ, kiểu dữ liệu,...
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
