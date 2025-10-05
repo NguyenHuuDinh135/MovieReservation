@@ -24,6 +24,9 @@ namespace MovieReservation.Server.Infrastructure
 
             builder.Services.AddScoped<MovieReservationDbContextInitialiser>();
 
+            builder.Services.AddScoped<IMovieReservationDbContext>(provider => 
+                provider.GetRequiredService<MovieReservationDbContext>());
+
             builder.Services.AddIdentity<User, IdentityRole>(options =>
             {
                 options.Password.RequiredLength = 6;
@@ -64,9 +67,7 @@ namespace MovieReservation.Server.Infrastructure
             builder.Services.AddTransient<IJwtService, JwtService>();
             builder.Services.AddTransient<IEmailService, EmailService>();
             builder.Services.AddTransient<IRedisService, RedisService>();
-            
-            // Repository
-            builder.Services.AddTransient<IBookingRepository, BookingRepository>();
+
 
             // Cookie settings cho Refresh Token
             builder.Services.ConfigureApplicationCookie(options =>

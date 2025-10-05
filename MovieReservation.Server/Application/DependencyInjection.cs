@@ -6,13 +6,7 @@ using MovieReservation.Server.Application.Auth.Commands.VerifyOtp;
 using MovieReservation.Server.Application.Auth.Commands.RefreshToken;
 using MovieReservation.Server.Application.Auth.Commands.Logout;
 using System.Reflection;
-using MovieReservation.Server.Application.Bookings.Queries.GetBookings;
-using MovieReservation.Server.Application.Movies.Queries.GetMovies;
-using MovieReservation.Server.Application.Common.Mappings;
-using MovieReservation.Server.Application.Bookings.Queries.GetBookingById;
-using MovieReservation.Server.Application.Bookings.Commands.CreateBooking;
-using MovieReservation.Server.Application.Features.Bookings.Commands.UpdateBooking;
-using MovieReservation.Server.Application.Bookings.Commands.DeleteBooking;
+using MovieReservation.Server.Application.Common.Behaviours;
 
 namespace MovieReservation.Server.Application
 {
@@ -21,31 +15,26 @@ namespace MovieReservation.Server.Application
         public static void AddApplicationServices(this IHostApplicationBuilder builder)
         {
             builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
-            builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(LoginCommandHandler).Assembly));
-            builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(RegisterCommandHandler).Assembly));
-            builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(VerifyOtpCommandHandler).Assembly));
-            builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(RefreshTokenCommandHandler).Assembly));
-            builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(LogoutCommandHandler).Assembly));
-            builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-
-            // Booking Queries
-            builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetBookingsQueryHandler).Assembly));
-            builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetBookingByIdQueryHandler).Assembly));
-            builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateBookingCommandHandler).Assembly));
-            builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(UpdateBookingCommandHandler).Assembly));
-            builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(DeleteBookingCommandHandler).Assembly));
-
-            // Movie Queries
-            builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetMoviesQueryHandler).Assembly));
-
 
             builder.Services.AddMediatR(cfg =>
             {
-                cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
+                cfg.RegisterServicesFromAssembly(typeof(LoginCommandHandler).Assembly);
+                cfg.RegisterServicesFromAssembly(typeof(RegisterCommandHandler).Assembly);
+                cfg.RegisterServicesFromAssembly(typeof(VerifyOtpCommandHandler).Assembly);
+                cfg.RegisterServicesFromAssembly(typeof(RefreshTokenCommandHandler).Assembly);
+                cfg.RegisterServicesFromAssembly(typeof(LogoutCommandHandler).Assembly);
             });
             
+            // Register Validators from specific assemblies
+            builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
-            builder.Services.AddAutoMapper(typeof(MappingProfile));
+            // Register MediatR handlers from specific assemblies
+            builder.Services.AddMediatR(cfg =>
+            {
+                cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
+                cfg.AddOpenBehavior(typeof(ValidationBehaviour<,>));
+            });
+            
         }
     }
 }

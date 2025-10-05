@@ -3,33 +3,41 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using Microsoft.AspNetCore.Http.HttpResults;
+using AutoMapper.QueryableExtensions;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
 using MovieReservation.Server.Application.Common.Exceptions;
-using MovieReservation.Server.Infrastructure.Data.Repositories;
+using MovieReservation.Server.Application.Common.Interfaces;
 
 
 namespace MovieReservation.Server.Application.Bookings.Queries.GetBookings
 {
-    public class GetBookingsQueryHandler : IRequestHandler<GetBookingsQuery, List<GetBookingsQueryResponse>>
+    public record GetBookingsQuery : IRequest<List<GetBookingsDto>>
     {
-        private readonly IBookingRepository _bookingRepository;
+    }
+    public class GetBookingsQueryHandler : IRequestHandler<GetBookingsQuery, List<GetBookingsDto>>
+    {
+        private readonly IMovieReservationDbContext _context;
         private readonly IMapper _mapper;
 
-        public GetBookingsQueryHandler(IBookingRepository bookingRepository, IMapper mapper)
+        public GetBookingsQueryHandler(IMovieReservationDbContext context, IMapper mapper)
         {
-            _bookingRepository = bookingRepository;
+            _context = context;
             _mapper = mapper;
         }
 
-        public async Task<List<GetBookingsQueryResponse>?> Handle(GetBookingsQuery request, CancellationToken cancellationToken)
+        public async Task<List<GetBookingsDto>> Handle(GetBookingsQuery request, CancellationToken cancellationToken)
         {
-            var bookings = await _bookingRepository.GetAllBookingsAsync(cancellationToken);
-            if (bookings == null || bookings.Count == 0)
-            {
+            var result = await _context.Bookings
+                .AsNoTracking()
+                .ProjectTo<GetBookingsDto>(_mapper.ConfigurationProvider)
+                .ToListAsync(cancellationToken);
+
+            if (result == null || result.Count == 0)
                 throw new NotFoundException("No bookings found.");
-            }
-            List<GetBookingsQueryResponse> responses = _mapper.Map<List<GetBookingsQueryResponse>>(bookings);
-            return responses;
+
+            return result;
         }
+
     }
 }

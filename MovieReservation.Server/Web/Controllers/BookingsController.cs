@@ -6,12 +6,11 @@ using MovieReservation.Server.Application.Common.Models;
 using MovieReservation.Server.Domain.Entities;
 using MovieReservation.Server.Web.Controllers;
 using MovieReservation.Server.Application.Bookings.Queries.GetBookings;
-using MovieReservation.Server.Application.Movies.Queries.GetMovies;
 using MovieReservation.Server.Application.Bookings.Queries.GetBookingById;
-using MovieReservation.Server.Application.Features.Bookings.Commands.CreateBooking;
-using MovieReservation.Server.Application.Features.Bookings.Commands.UpdateBooking;
 using MovieReservation.Server.Application.Bookings.Commands.DeleteBooking;
 using MovieReservation.Server.Application.Common.Exceptions;
+using MovieReservation.Server.Application.Bookings.Commands.CreateBooking;
+using MovieReservation.Server.Application.Bookings.Commands.UpdateBooking;
 
 namespace MovieReservation.Server.Controllers
 {
@@ -20,9 +19,9 @@ namespace MovieReservation.Server.Controllers
     public class BookingsController : BaseController
     {
 
-        [Authorize(Roles = "Admin")] 
+        // [Authorize(Roles = "Admin")] 
         [HttpGet("get-all")]
-        public async Task<ActionResult<List<GetBookingsQueryResponse>>> GetAllBookings()
+        public async Task<ActionResult<List<GetBookingsQuery>>> GetAllBookings()
         {
             try
             {
@@ -39,9 +38,9 @@ namespace MovieReservation.Server.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin,User")]
+        // [Authorize(Roles = "Admin,User")]
         [HttpGet("get-by-id/{id:int}")]
-        public async Task<ActionResult<GetBookingByIdQueryResponse>> GetBookingById(int id)
+        public async Task<ActionResult<GetBookingByIdDto>> GetBookingById(int id)
         {
             try
             {
@@ -62,7 +61,7 @@ namespace MovieReservation.Server.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin,User")]
+        // [Authorize(Roles = "Admin,User")]
         [HttpPost("create")]
         public async Task<ActionResult<int>> CreateBooking(CreateBookingCommand command)
         {
@@ -81,7 +80,7 @@ namespace MovieReservation.Server.Controllers
             }
         }
         
-        [Authorize(Roles = "Admin,User")]
+        // [Authorize(Roles = "Admin,User")]
         [HttpPut("update")]
         public async Task<ActionResult<Unit>> UpdateBooking(UpdateBookingCommand command)
         {
@@ -104,7 +103,7 @@ namespace MovieReservation.Server.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin,User")]
+        // [Authorize(Roles = "Admin,User")]
         [HttpDelete("delete/{id:int}")]
         public async Task<ActionResult> DeleteBooking(int id)
         {

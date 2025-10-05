@@ -10,19 +10,31 @@ using MovieReservation.Server.Application.Common.Interfaces;
 
 namespace MovieReservation.Server.Application.Bookings.Commands.DeleteBooking
 {
+    public record DeleteBookingCommand : IRequest
+    {
+        public int Id { get; set; }
+    }
     public class DeleteBookingCommandHandler : IRequestHandler<DeleteBookingCommand>
     {
-        private readonly IBookingRepository _bookingRepository;
+        private readonly IMovieReservationDbContext _context;
 
-        public DeleteBookingCommandHandler(IBookingRepository bookingRepository)
+        public DeleteBookingCommandHandler(IMovieReservationDbContext context)
         {
-            _bookingRepository = bookingRepository;
+            _context = context;
         }
 
         public async Task Handle(DeleteBookingCommand request, CancellationToken cancellationToken)
         {
-            Booking booking = await _bookingRepository.GetBookingByIdAsync(request.Id, cancellationToken) ?? throw new NotFoundException($"Booking with Id {request.Id} not found.");
-            await _bookingRepository.DeleteBookingAsync(booking, cancellationToken);
+            Booking booking = await _context.Bookings.FindAsync(new object[] { request.Id }, cancellationToken) ?? throw new NotFoundException($"Booking with Id {request.Id} not found.");
+
+            if (booking == null)
+            {
+                throw new NotFoundException($"Booking with Id {request.Id} not found.");
+            }
+            
+            _context.Bookings.Remove(booking);
+
+            await _context.SaveChangesAsync(cancellationToken);
         }
     }
 }

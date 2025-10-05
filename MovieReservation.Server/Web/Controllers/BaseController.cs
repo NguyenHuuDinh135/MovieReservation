@@ -12,7 +12,7 @@ namespace MovieReservation.Server.Web.Controllers
     [Route("api/[controller]")]
     public abstract class BaseController : Controller
     {
-        private ISender _sender;
+        private ISender? _sender;
         protected ISender Sender => _sender ??= HttpContext.RequestServices.GetRequiredService<ISender>();
     }
 }
