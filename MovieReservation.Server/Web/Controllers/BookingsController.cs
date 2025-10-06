@@ -11,6 +11,8 @@ using MovieReservation.Server.Application.Bookings.Commands.DeleteBooking;
 using MovieReservation.Server.Application.Common.Exceptions;
 using MovieReservation.Server.Application.Bookings.Commands.CreateBooking;
 using MovieReservation.Server.Application.Bookings.Commands.UpdateBooking;
+using MovieReservation.Server.Application.Bookings.Queries.GetBookingsByUser;
+using MovieReservation.Server.Application.Bookings.Queries.GetBookingsByShow;
 
 namespace MovieReservation.Server.Controllers
 {
@@ -45,6 +47,52 @@ namespace MovieReservation.Server.Controllers
             try
             {
                 var result = await Sender.Send(new GetBookingByIdQuery { Id = id });
+                return Ok(result);
+            }
+            catch (NotFoundException ex) // custom exception
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (ConflictException ex)
+            {
+                return Conflict(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred", detail = ex.Message });
+            }
+        }
+
+        // [Authorize(Roles = "Admin")]
+        [HttpGet("get-by-userid/{id}")]
+        public async Task<ActionResult<GetBookingsByUserDto>> GetBookingsByUser(String id)
+        {
+            try
+            {
+                var result = await Sender.Send(new GetBooingsByUserQuery { Id = id });
+                return Ok(result);
+            }
+            catch (NotFoundException ex) // custom exception
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (ConflictException ex)
+            {
+                return Conflict(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred", detail = ex.Message });
+            }
+        }
+
+        // [Authorize(Roles = "Admin")]
+        [HttpGet("get-by-showid/{id:int}")]
+        public async Task<ActionResult<GetBookingsByShowDto>> GetBookingsByShow(int id)
+        {
+            try
+            {
+                var result = await Sender.Send(new GetBookingsByShowQuery { Id = id });
                 return Ok(result);
             }
             catch (NotFoundException ex) // custom exception
