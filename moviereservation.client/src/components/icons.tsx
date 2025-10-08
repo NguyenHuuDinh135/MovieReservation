@@ -8,6 +8,7 @@ import {
   CreditCard,
   File,
   FileText,
+  Film,
   HelpCircle,
   Image,
   Laptop,
@@ -70,4 +71,5 @@ export const Icons = {
   ),
   twitter: Twitter,
   check: Check,
+  film: Film,
 }

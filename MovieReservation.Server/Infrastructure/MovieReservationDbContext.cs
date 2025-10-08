@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 namespace MovieReservation.Server.Infrastructure
 {
-    public class MovieReservationDbContext : IdentityDbContext<User>
+    public class MovieReservationDbContext : IdentityDbContext<User>, IMovieReservationDbContext
     {
         public MovieReservationDbContext(DbContextOptions<MovieReservationDbContext> options)
             : base(options) { }

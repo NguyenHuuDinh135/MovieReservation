@@ -9,6 +9,8 @@ import { ModeSwitcher } from "@/components/mode-switcher"
 import { Button } from "@/components/ui/button" // ✅ Đảm bảo import đúng từ UI của bạn
 import { Separator } from "@/components/ui/separator"
 import React from "react"
+import { CommandMenu } from "@/components/command-menu"
+import { SiteConfig } from "@/components/site-config"
 // import { SiteConfig } from "@/components/site-config"
 export function SiteHeader() {
   //const location = useLocation()
@@ -43,18 +45,16 @@ export function SiteHeader() {
             className="hidden size-8 lg:flex"
           >
             <Link to="/">
-              <Icons.logo className="size-5" />
+              <Icons.film className="size-5" />
               <span className="sr-only">{siteConfig.name}</span>
             </Link>
           </Button>
           <MainNav className="hidden lg:flex" />
           <div className="ml-auto flex items-center gap-2 md:flex-1 md:justify-end">
             <div className="hidden w-full flex-1 md:flex md:w-auto md:flex-none">
-              {/* <CommandMenu
-                tree={pageTree}
-                colors={colors}
-                navItems={siteConfig.navItems}
-              /> */}
+              <CommandMenu
+                
+              />
             </div>
             <Separator
               orientation="vertical"
@@ -62,7 +62,7 @@ export function SiteHeader() {
             />
             <ModeSwitcher />
             <Separator orientation="vertical" className="3xl:flex hidden" />
-            {/* <SiteConfig className="3xl:flex hidden" /> */}
+            <SiteConfig className="3xl:flex hidden" />
             
             <Separator orientation="vertical" />
             

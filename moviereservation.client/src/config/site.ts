@@ -7,6 +7,7 @@ export type SiteConfig = typeof siteConfig
 const links = {
   githubRepo: "https://github.com/sadmann7/skateshop",
   githubAccount: "https://github.com/sadmann7",
+  github: "https://github.com/NguyenHuuDinh135/MovieReservation"
 }
 
 export const siteConfig = {
