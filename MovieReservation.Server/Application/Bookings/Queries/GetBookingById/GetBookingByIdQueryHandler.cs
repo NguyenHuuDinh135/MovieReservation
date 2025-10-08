@@ -10,12 +10,12 @@ using MovieReservation.Server.Application.Common.Interfaces;
 
 namespace MovieReservation.Server.Application.Bookings.Queries.GetBookingById
 {
-    public record GetBookingByIdQuery : IRequest<GetBookingByIdDto>
+    public record GetBookingByIdQuery : IRequest<BookingByIdDto>
     {
-        public int Id { get; set; }
+        public int Id { get; init; }
     }
 
-    public class GetBookingByIdQueryHandler : IRequestHandler<GetBookingByIdQuery, GetBookingByIdDto>
+    public class GetBookingByIdQueryHandler : IRequestHandler<GetBookingByIdQuery, BookingByIdDto>
     {
         private readonly IMovieReservationDbContext _context;
         private readonly IMapper _mapper;
@@ -26,12 +26,12 @@ namespace MovieReservation.Server.Application.Bookings.Queries.GetBookingById
             _mapper = mapper;
         }
 
-        public async Task<GetBookingByIdDto> Handle(GetBookingByIdQuery request, CancellationToken cancellationToken)
+        public async Task<BookingByIdDto> Handle(GetBookingByIdQuery request, CancellationToken cancellationToken)
         {
             var booking = await _context.Bookings
                 .AsNoTracking()
                 .Where(b => b.Id == request.Id)
-                .ProjectTo<GetBookingByIdDto>(_mapper.ConfigurationProvider)
+                .ProjectTo<BookingByIdDto>(_mapper.ConfigurationProvider)
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (booking == null)

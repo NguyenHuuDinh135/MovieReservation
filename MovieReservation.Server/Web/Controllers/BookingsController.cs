@@ -22,7 +22,7 @@ namespace MovieReservation.Server.Controllers
     {
 
         // [Authorize(Roles = "Admin")] 
-        [HttpGet("get-all")]
+        [HttpGet("all")]
         public async Task<ActionResult<List<GetBookingsQuery>>> GetAllBookings()
         {
             try
@@ -41,8 +41,8 @@ namespace MovieReservation.Server.Controllers
         }
 
         // [Authorize(Roles = "Admin,User")]
-        [HttpGet("get-by-id/{id:int}")]
-        public async Task<ActionResult<GetBookingByIdDto>> GetBookingById(int id)
+        [HttpGet("id/{id:int}")]
+        public async Task<ActionResult<BookingByIdDto>> GetBookingById(int id)
         {
             try
             {
@@ -64,8 +64,8 @@ namespace MovieReservation.Server.Controllers
         }
 
         // [Authorize(Roles = "Admin")]
-        [HttpGet("get-by-userid/{id}")]
-        public async Task<ActionResult<GetBookingsByUserDto>> GetBookingsByUser(String id)
+        [HttpGet("users/{id}")]
+        public async Task<ActionResult<BookingsByUserDto>> GetBookingsByUser(String id)
         {
             try
             {
@@ -87,8 +87,8 @@ namespace MovieReservation.Server.Controllers
         }
 
         // [Authorize(Roles = "Admin")]
-        [HttpGet("get-by-showid/{id:int}")]
-        public async Task<ActionResult<GetBookingsByShowDto>> GetBookingsByShow(int id)
+        [HttpGet("shows/{id:int}")]
+        public async Task<ActionResult<BookingsByShowDto>> GetBookingsByShow(int id)
         {
             try
             {

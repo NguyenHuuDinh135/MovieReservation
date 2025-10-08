@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using MovieReservation.Server.Domain.Enums;
 
-namespace MovieReservation.Server.Application.Bookings.Queries.GetBookingsByUser
+namespace MovieReservation.Server.Application.Bookings.Queries.GetBookingById
 {
-    public class GetBookingsByUserDto
+    public class BookingByIdDto
     {
         public int Id { get; init; }
         public string UserId { get; init; }
@@ -21,7 +22,7 @@ namespace MovieReservation.Server.Application.Bookings.Queries.GetBookingsByUser
         {
             public Mapping()
             {
-                CreateMap<Booking, GetBookingsByUserDto>();
+                CreateMap<Booking, BookingByIdDto>();
             }
         }
     }

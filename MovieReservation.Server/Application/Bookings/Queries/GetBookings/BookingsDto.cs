@@ -3,7 +3,7 @@ using MovieReservation.Server.Domain.Enums;
 
 namespace MovieReservation.Server.Application.Bookings.Queries.GetBookings
 {
-    public class GetBookingsDto
+    public class BookingsDto
     {
         public int Id { get; init; }
         public string UserId { get; init; }
@@ -18,7 +18,7 @@ namespace MovieReservation.Server.Application.Bookings.Queries.GetBookings
         {
             public Mapping()
             {
-                CreateMap<Booking, GetBookingsDto>();
+                CreateMap<Booking, BookingsDto>();
             }
         }
     }
