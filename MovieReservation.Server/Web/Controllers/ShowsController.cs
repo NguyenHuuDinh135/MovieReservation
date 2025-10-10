@@ -126,14 +126,24 @@ namespace MovieReservation.Server.Web.Controllers
             }
         }
 
-        // [Authorize(Roles = "Admin")]
-        [HttpDelete("delete/{id:int}")]
-        public async Task<ActionResult<Unit>> DeleteShow(int id)
+        // [Authorize(Roles = "Admin")] // Bỏ comment nếu cần xác thực vai trò
+        [HttpDelete("id/{id:int}")]
+        public async Task<ActionResult> DeleteShow(int id)
         {
             try
             {
                 await Sender.Send(new DeleteShowCommand { Id = id });
-                return NoContent(); // 204
+                
+                // Trả về 200 OK với body chứa thông báo như trong ví dụ
+                return Ok(new
+                {
+                    headers = new
+                    {
+                        success = 1,
+                        message = "Show has been deleted"
+                    },
+                    body = new { }
+                });
             }
             catch (NotFoundException ex)
             {
