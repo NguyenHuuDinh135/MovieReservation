@@ -9,11 +9,11 @@ using MovieReservation.Server.Application.Common.Exceptions;
 
 namespace MovieReservation.Server.Application.Movies.Queries.GetMovieById
 {
-    public record GetMovieByIdQuery : IRequest<MovieByIdDto>
+    public record GetMovieByIdQuery : IRequest<MovieDto>
     {
         public int Id { get; set; }
     }
-    public class GetMovieByIdQueryHandler : IRequestHandler<GetMovieByIdQuery, MovieByIdDto>
+    public class GetMovieByIdQueryHandler : IRequestHandler<GetMovieByIdQuery, MovieDto>
     {
         private IMovieReservationDbContext _context;
         private IMapper _mapper;
@@ -23,12 +23,12 @@ namespace MovieReservation.Server.Application.Movies.Queries.GetMovieById
             _mapper = mapper;
         }
 
-        public async Task<MovieByIdDto> Handle(GetMovieByIdQuery request, CancellationToken cancellationToken)
+        public async Task<MovieDto> Handle(GetMovieByIdQuery request, CancellationToken cancellationToken)
         {
             var movie = await _context.Movies
                 .AsNoTracking()
-                .ProjectTo<MovieByIdDto>(_mapper.ConfigurationProvider)
                 .Where(m => m.Id == request.Id)
+                .ProjectTo<MovieDto>(_mapper.ConfigurationProvider)
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (movie == null)

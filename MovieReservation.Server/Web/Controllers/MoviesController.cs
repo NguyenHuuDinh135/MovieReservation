@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using MovieReservation.Server.Application.Movies.Commands.CreateMovie;
 using MovieReservation.Server.Application.Movies.Commands.DeleteMovie;
 using MovieReservation.Server.Application.Movies.Commands.UpdateMovie;
+using MovieReservation.Server.Application.Movies.Queries;
 using MovieReservation.Server.Application.Movies.Queries.GetFilteredMovies;
 using MovieReservation.Server.Application.Movies.Queries.GetMovieById;
 using MovieReservation.Server.Application.Movies.Queries.GetMovies;
@@ -18,7 +19,7 @@ namespace MovieReservation.Server.Controllers
 
         // [Authorize]
         [HttpGet("all")]
-        public async Task<ActionResult<List<MoviesDto>>> GetAll()
+        public async Task<ActionResult<List<MovieDto>>> GetAll()
         {
             var result = await Sender.Send(new GetMoviesQuery{});
 
@@ -27,7 +28,7 @@ namespace MovieReservation.Server.Controllers
 
         // [Authorize]
         [HttpGet("id/{id:int}")]
-        public async Task<ActionResult<MovieByIdDto>> GetById(int id)
+        public async Task<ActionResult<MovieDto>> GetById(int id)
         {
             var result = await Sender.Send(new GetMovieByIdQuery { Id = id });
 
