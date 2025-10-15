@@ -18,6 +18,17 @@ Accept: application/json
 GET http://localhost:5178/api/bookings/get-by-id/1
 Accept: application/json
 
+
+### Lấy danh sách đặt vé theo userId
+GET http://localhost:5178/api/bookings/get-by-userid/2b6dfb56-8a4d-4df7-8b9f-b2d0a18bb58e
+Content-Type: application/json
+
+###
+
+### Lấy danh sách đặt vé theo showId
+GET http://localhost:5178/api/bookings/get-by-showid/1
+Content-Type: application/json
+
 ###
 
 # Create new booking
@@ -26,12 +37,12 @@ Content-Type: application/json
 
 {
   "userId": "2b6dfb56-8a4d-4df7-8b9f-b2d0a18bb58e",
-  "showId": 0,
-  "seatRow": "",
-  "seatNumber": 0,
-  "price": 0,
-  "status": 0,
-  "bookingDateTime": ""
+  "showId": 1,
+  "seatRow": "A",
+  "seatNumber": 5,
+  "price": 85000,
+  "status": 1,
+  "bookingDateTime": "2024-10-07T15:00:00Z"
 }
 
 ###
@@ -41,13 +52,13 @@ PUT http://localhost:5178/api/bookings/update
 Content-Type: application/json
 
 {
-  "id": 0,
+  "id": 1,
   "userId": "2b6dfb56-8a4d-4df7-8b9f-b2d0a18bb58e",
-  "showId": 0,
-  "seatRow": "",
+  "showId": 7,
+  "seatRow": "A",
   "seatNumber": 0,
   "price": 0,
-  "status": "",
+  "status": 2,
   "bookingDateTime": "2024-01-15T19:30:00Z"
 }
 
@@ -58,6 +69,68 @@ DELETE http://localhost:5178/api/bookings/delete/1
 Accept: application/json
 
 ###
+
+# ===========================================
+# SHOWS API ENDPOINTS
+# ===========================================
+
+# Lấy tất cả các buổi chiếu
+GET http://localhost:5178/api/shows/all
+Accept: application/json
+
+###
+
+# Lấy buổi chiếu theo ID
+GET http://localhost:5178/api/shows/id/41
+Accept: application/json
+
+###
+
+# Lọc buổi chiếu theo ngày
+GET http://localhost:5178/api/shows/filters?date=2021-06-08T00:00:00
+Accept: application/json
+
+###
+
+# Tạo buổi chiếu mới
+POST http://localhost:5178/api/shows/create
+Content-Type: application/json
+
+{
+  "movieId": 4,
+  "theaterId": 3,
+  "date": "2021-03-16",
+  "startTime": "14:00:00",
+  "endTime": "16:15:00",
+  "status": 1,
+  "type": 1
+}
+
+###
+
+# Cập nhật buổi chiếu
+PUT http://localhost:5178/api/shows/update
+Content-Type: application/json
+
+{
+  "id": 41,
+  "movieId": 4,
+  "theaterId": 4,
+  "date": "2021-03-16",
+  "startTime": "14:30:00",
+  "endTime": "16:45:00",
+  "status": 2,
+  "type": 2
+}
+
+###
+
+# Xóa buổi chiếu
+DELETE http://localhost:5178/api/shows/delete/41
+Accept: application/json
+
+###
+
 
 # ===========================================
 # ROLES API ENDPOINTS
@@ -90,13 +163,12 @@ Content-Type: application/json
   "fullName": "Nguyen Van A",
   "age": 20,
   "pictureUrl": "string.png"
-
 }
 
 ###
 
 # Update Role
-PUT https://localhost:44314/api/Roles/update/1006
+PUT https://localhost:44314/api/Roles/update/1002
 Content-Type: application/json
 
 {
@@ -106,10 +178,8 @@ Content-Type: application/json
 
 ###
 
-# Delete Role
-DELETE https://localhost:44314/api/Roles/delete/1006
-Accept: */*
+# Update Role
+https://localhost:44314/api/Roles/delete/1002
+Accpet: */*
 
 ###
-
-
