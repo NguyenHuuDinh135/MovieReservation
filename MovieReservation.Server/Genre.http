@@ -1,0 +1,38 @@
+@MovieReservation.Server_HostAddress = http://localhost:5178
+
+#Genre API
+
+# Get all Genre
+GET http://localhost:5178/api/genre/all
+Accept: application/json    
+
+# Get Genre by id
+GET http://localhost:5178/api/genre/id/1
+Accept: application/json
+
+# Get Genre by MovieId
+GET http://localhost:5178/api/genre/movie/1
+Accept: application/json
+
+# Create Genre
+POST http://localhost:5178/api/genre/create
+Content-Type: application/json
+
+{
+  "name": "Action",
+  "description": "Action movies with stunts and adventure"
+}
+
+# Update genre
+PUT http://localhost:5178/api/genre/update
+Content-Type: application/json
+
+{
+  "id": 1,
+  "name": "Adventure",
+  "description": "Adventure movies with exploration themes"
+}
+
+# Delete genre
+DELETE http://localhost:5178/api/genre/delete/1
+Accept: application/json
