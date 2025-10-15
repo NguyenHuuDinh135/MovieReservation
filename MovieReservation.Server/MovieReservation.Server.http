@@ -58,3 +58,58 @@ DELETE http://localhost:5178/api/bookings/delete/1
 Accept: application/json
 
 ###
+
+# ===========================================
+# ROLES API ENDPOINTS
+# ===========================================
+
+# Get All Roles
+GET https://localhost:44314/api/Roles/all
+Accept: application/json
+
+###
+
+# Get Role By Id
+GET https://localhost:44314/api/Roles/id/1
+Accept: application/json
+
+###
+
+# Get All Movies For A Role
+GET https://localhost:44314/api/Roles/1/movie
+Accept: application/json
+
+###
+
+# Create Role
+POST https://localhost:44314/api/Roles/create
+Content-Type: application/json
+
+{
+  
+  "fullName": "Nguyen Van A",
+  "age": 20,
+  "pictureUrl": "string.png"
+
+}
+
+###
+
+# Update Role
+PUT https://localhost:44314/api/Roles/update/1006
+Content-Type: application/json
+
+{
+  "age": 30,
+  "pictureUrl": "ABC.png"
+}
+
+###
+
+# Delete Role
+DELETE https://localhost:44314/api/Roles/delete/1006
+Accept: */*
+
+###
+
+
