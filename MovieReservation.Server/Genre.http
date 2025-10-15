@@ -19,8 +19,7 @@ POST http://localhost:5178/api/genre/create
 Content-Type: application/json
 
 {
-  "name": "Action",
-  "description": "Action movies with stunts and adventure"
+  "name": "Cartoon",
 }
 
 # Update genre
@@ -30,7 +29,6 @@ Content-Type: application/json
 {
   "id": 1,
   "name": "Adventure",
-  "description": "Adventure movies with exploration themes"
 }
 
 # Delete genre

@@ -11,7 +11,7 @@ namespace MovieReservation.Server.Application.Genres.Commands.CreateBooking
         // Xử lý validate cho GenreBookingCommand
         public CreateGenreCommandValidator()
         {
-            RuleFor(X => x.Name).NotEmpty().MaximumLength(100);
+            RuleFor(x => x.Name).NotEmpty().MaximumLength(100);
         }
     }
 }
