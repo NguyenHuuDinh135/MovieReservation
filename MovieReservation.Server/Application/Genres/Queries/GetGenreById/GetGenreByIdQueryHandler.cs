@@ -10,11 +10,11 @@ using MovieReservation.Server.Application.Common.Interfaces;
 
 namespace MovieReservation.Server.Application.Genres.Queries.GetGenreById
 {
-    public record GetGenresByIdQuery : IRequest<GenresByIdDto>
+    public record GetGenreByIdQuery : IRequest<GenreByIdDto>
     {
         public int Id { get; init; }
     }
-    public class GetGenreByIdQueryHandler : IRequestHandler<GetGenresByIdQuery, GenresByIdDto>
+    public class GetGenreByIdQueryHandler : IRequestHandler<GetGenreByIdQuery, GenreByIdDto>
     {
         private readonly IMovieReservationDbContext _context;
         private readonly IMapper _mapper;
@@ -25,12 +25,12 @@ namespace MovieReservation.Server.Application.Genres.Queries.GetGenreById
             _mapper = mapper;
         }
 
-        public async Task<GenresByIdDto> Handle(GetGenresByIdQuery request, CancellationToken cancellationToken)
+        public async Task<GenreByIdDto> Handle(GetGenreByIdQuery request, CancellationToken cancellationToken)
         {
             var genre = await _context.Genres
                 .AsNoTracking()
                 .Where(b => b.Id == request.Id)
-                .ProjectTo<GenresByIdDto>(_mapper.ConfigurationProvider)
+                .ProjectTo<GenreByIdDto>(_mapper.ConfigurationProvider)
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (genre == null)

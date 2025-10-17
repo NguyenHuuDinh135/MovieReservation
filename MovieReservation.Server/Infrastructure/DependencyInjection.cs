@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using MovieReservation.Server.Application.Common.Interfaces;
-using MovieReservation.Server.Infrastructure.Data.Repositories;
 using MovieReservation.Server.Infrastructure.Services;
 using StackExchange.Redis;
 

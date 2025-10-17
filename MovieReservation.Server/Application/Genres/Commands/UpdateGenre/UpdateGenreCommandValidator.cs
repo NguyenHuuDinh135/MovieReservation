@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MovieReservation.Server.Application.Bookings.Commands.UpdateBooking;
+using MovieReservation.Server.Application.Genres.Commands.UpdateGenre;
 namespace MovieReservation.Server.Application.Genres.Commands.UpdateGenre
 {
     public class UpdateGenreCommandValidator : AbstractValidator<UpdateGenreCommand>

@@ -6,7 +6,7 @@ using MovieReservation.Server.Application.Common.Models;
 using MovieReservation.Server.Domain.Entities;
 using MovieReservation.Server.Web.Controllers;
 using MovieReservation.Server.Application.Genres.Queries.GetGenres;
-using MovieReservation.Server.Application.Genres.Queries.GetBookingById;
+using MovieReservation.Server.Application.Genres.Queries.GetGenreById;
 using MovieReservation.Server.Application.Genres.Commands.DeleteGenre;
 using MovieReservation.Server.Application.Genres.Commands.UpdateGenre;
 using MovieReservation.Server.Application.Common.Exceptions;
@@ -64,7 +64,7 @@ namespace MovieReservation.Server.Web.Controllers
 
         // [Authorize(Role = "Admin, User")]
         [HttpPost("movies/{id}")]
-        public async Task<ActionResult<GenresByMovieDto>> GetGenreByMovie(int id)
+        public async Task<ActionResult<GenresByMovieDto>> GetGenresByMovie(int id)
         {
             var result = await Sender.Send(new GetGenresByMovieQuery { Id = id });
             return Ok(result);

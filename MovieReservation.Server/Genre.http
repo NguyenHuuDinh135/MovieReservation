@@ -19,7 +19,7 @@ POST http://localhost:5178/api/genre/create
 Content-Type: application/json
 
 {
-  "name": "Cartoon",
+  "name": "Cartoon"
 }
 
 # Update genre
@@ -28,7 +28,7 @@ Content-Type: application/json
 
 {
   "id": 1,
-  "name": "Adventure",
+  "name": "Adventure"
 }
 
 # Delete genre

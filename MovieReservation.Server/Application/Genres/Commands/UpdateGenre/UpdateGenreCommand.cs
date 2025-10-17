@@ -1,10 +1,15 @@
-using MovieReservation.Server.Application.Common.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using MovieReservation.Server.Application.Genres.Commands.UpdateGenre;
 
 namespace MovieReservation.Server.Application.Genres.Commands.UpdateGenre
 {
     public record UpdateGenreCommand : IRequest
     {
-        public string name { get; set; }
+        public int Id { get; init; }
+        public string Name { get; set; }
     }
 
     public class UpdateGenreCommandHandler : IRequestHandler<UpdateGenreCommand>
@@ -17,11 +22,11 @@ namespace MovieReservation.Server.Application.Genres.Commands.UpdateGenre
         }
 
         public async Task Handle(UpdateGenreCommand request, CancellationToken cancellationToken) {
-            var Genre = await _context.Genres.FindAsync(new object[] { request.Id }, cancellationToken);
+            var genre = await _context.Genres.FindAsync(new object[] { request.Id }, cancellationToken);
 
             if(genre == null)
             {
-                throw new Exception($"Booking not found: {request.Id}");
+                throw new Exception($"Genre not found: {request.Id}");
             }
 
             // Sẽ xử lý Validate trong Validator sau

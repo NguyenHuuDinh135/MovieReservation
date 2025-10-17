@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using MovieReservation.Server.Application.Common.Exceptions
+using MovieReservation.Server.Application.Common.Exceptions;
 
-namespace MovieReservation.Server.Application.Genres.Common.Exceptions;
+namespace MovieReservation.Server.Application.Genres.Commands.CreateGenre
 {
     public record CreateGenreCommand : IRequest<int>
     {

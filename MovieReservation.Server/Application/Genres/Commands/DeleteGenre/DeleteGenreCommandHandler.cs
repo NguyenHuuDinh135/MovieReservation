@@ -10,7 +10,12 @@ using MovieReservation.Server.Application.Common.Interfaces;
 
 namespace MovieReservation.Server.Application.Genres.Commands.DeleteGenre
 {
-    public class DeleteGenreCommandHandler : IRequest
+    public record DeleteGenreCommand : IRequest
+    {
+        public int Id { get; init;}
+    }
+
+    public class DeleteGenreCommandHandler : IRequestHandler<DeleteGenreCommand>
     {
         private readonly IMovieReservationDbContext _context;
 
@@ -29,7 +34,7 @@ namespace MovieReservation.Server.Application.Genres.Commands.DeleteGenre
             }
 
             _context.Genres.Remove(genre);
-            await _context.SaveChangesAsync(CancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
         }
     }
 }
