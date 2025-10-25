@@ -9,13 +9,13 @@
 # ===========================================
 
 # Get all bookings
-GET http://localhost:5178/api/Bookings/get-all
+GET http://localhost:5178/api/Bookings/all
 Accept: application/json
 
 ###
 
 # Get booking by ID
-GET http://localhost:5178/api/bookings/get-by-id/1
+GET http://localhost:5178/api/bookings/id/1
 Accept: application/json
 
 
@@ -70,6 +70,53 @@ Accept: application/json
 
 ###
 
+###
+
+# ===========================================
+# MOVIES API ENDPOINTS
+# ===========================================
+
+### Get all movies
+GET http://localhost:5178/api/movies/all
+Accept: application/json
+
+### Get movie by ID
+GET http://localhost:5178/api/movies/id/1
+Accept: application/json
+
+### Get filtered movies
+GET http://localhost:5178/api/movies/filtered?movie_type=now_showing&page=1&pageSize=10
+Accept: application/json
+
+### Get roles for a movie
+GET http://localhost:5178/api/movies/id/1/roles
+Accept: application/json
+
+### Create new movie
+POST http://localhost:5178/api/movies/create
+Content-Type: application/json
+
+{
+  "title": "Inception",
+  "year": 2025,
+  "summary": "A mind-bending thriller by Christopher Nolan",
+  "trailerUrl": "string",
+  "posterUrl": "string",
+  "movieType": "ComingSoon"
+}
+
+### Update movie
+PUT http://localhost:5178/api/movies/update
+Content-Type: application/json
+
+{
+  "id": 1,
+  "movieType": "Removed"
+}
+
+### Delete movie
+DELETE http://localhost:5178/api/movies/delete/id/1
+Accept: application/json
 
 
 # ===========================================
