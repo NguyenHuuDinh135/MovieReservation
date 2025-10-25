@@ -12,7 +12,7 @@ namespace MovieReservation.Server.Application.Theaters.Queries.GetTheaters
         public string Name { get; set; } = string.Empty;
         public int NumOfRows { get; set; }
         public int SeatsPerRow { get; set; }
-        public TheaterType Theater_Type { get; set; }
+        public TheaterType Type { get; set; }
     }
 
     public class Mapping : Profile
