@@ -14,16 +14,8 @@ namespace MovieReservation.Server.Application
     {
         public static void AddApplicationServices(this IHostApplicationBuilder builder)
         {
+            // Register AutoMapper profiles from specific assemblies
             builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
-
-            builder.Services.AddMediatR(cfg =>
-            {
-                cfg.RegisterServicesFromAssembly(typeof(LoginCommandHandler).Assembly);
-                cfg.RegisterServicesFromAssembly(typeof(RegisterCommandHandler).Assembly);
-                cfg.RegisterServicesFromAssembly(typeof(VerifyOtpCommandHandler).Assembly);
-                cfg.RegisterServicesFromAssembly(typeof(RefreshTokenCommandHandler).Assembly);
-                cfg.RegisterServicesFromAssembly(typeof(LogoutCommandHandler).Assembly);
-            });
             
             // Register Validators from specific assemblies
             builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
