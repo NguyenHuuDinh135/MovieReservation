@@ -1,3 +1,4 @@
+using MovieReservation.Server.Application.Common.Exceptions;
 using MovieReservation.Server.Application.Common.Interfaces;
 
 namespace MovieReservation.Server.Application.Bookings.Commands.UpdateBooking
@@ -24,7 +25,7 @@ namespace MovieReservation.Server.Application.Bookings.Commands.UpdateBooking
 
             if (booking == null)
             {
-                throw new Exception($"Booking not found: {request.Id}");
+                throw new NotFoundException($"Booking not found: {request.Id}");
             }
 
             // Sẽ xử lý Validate trong Validator sau
