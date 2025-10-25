@@ -13,13 +13,25 @@ namespace MovieReservation.Server.Application.Theaters.Queries.GetTheaters
         public int NumOfRows { get; set; }
         public int SeatsPerRow { get; set; }
         public TheaterType Type { get; set; }
+        public List<TheaterSeatDto> Missing { get; set; } = [];
+        public List<TheaterSeatDto> Blocked { get; set; } = [];
+    }
+    
+    public class TheaterSeatDto
+    {
+        public string SeatRow { get; set; } = string.Empty;
+        public int SeatNumber { get; set; }
     }
 
     public class Mapping : Profile
     {
         public Mapping()
         {
-            CreateMap<Theater, TheatersDto>();
+            CreateMap<Theater, TheatersDto>()
+                .ForMember(dest => dest.Missing, opt => opt.MapFrom(src => src.TheaterSeats.Where(seat => seat.Type == SeatType.Missing)))
+                .ForMember(dest => dest.Blocked, opt => opt.MapFrom(src => src.TheaterSeats.Where(seat => seat.Type == SeatType.Blocked)));
+
+            CreateMap<TheaterSeat, TheaterSeatDto>();
         }
     }
 }
