@@ -10,10 +10,7 @@ using MovieReservation.Server.Application.Common.Interfaces;
 
 namespace MovieReservation.Server.Application.Genres.Commands.DeleteGenre
 {
-    public record DeleteGenreCommand : IRequest
-    {
-        public int Id { get; init;}
-    }
+    public record DeleteGenreCommand(int Id) : IRequest;
 
     public class DeleteGenreCommandHandler : IRequestHandler<DeleteGenreCommand>
     {
@@ -23,15 +20,11 @@ namespace MovieReservation.Server.Application.Genres.Commands.DeleteGenre
         {
             _context = context;
         }
-        
+
         public async Task Handle(DeleteGenreCommand request, CancellationToken cancellationToken)
         {
-            Genre genre = await _context.Genres.FindAsync(new object[] { request.Id }, cancellationToken) ?? throw new NotFoundException($"Genre with Id {request.Id} not found.");
-
-            if(genre == null )
-            {
-                throw new NotFoundException($"Genre with Id {request.Id} not found.");
-            }
+            var genre = await _context.Genres.FindAsync(new object[] { request.Id }, cancellationToken)
+                ?? throw new NotFoundException($"Genre with Id {request.Id} not found.");
 
             _context.Genres.Remove(genre);
             await _context.SaveChangesAsync(cancellationToken);
