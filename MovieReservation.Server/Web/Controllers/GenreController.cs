@@ -63,8 +63,8 @@ namespace MovieReservation.Server.Web.Controllers
         }
 
         // [Authorize(Role = "Admin, User")]
-        [HttpPost("movies/{id}")]
-        public async Task<ActionResult<GenresByMovieDto>> GetGenresByMovie(int id)
+        [HttpGet("movies/{id}")]
+        public async Task<ActionResult<List<GenresByMovieDto>>> GetGenresByMovie(int id)
         {
             var result = await Sender.Send(new GetGenresByMovieQuery { Id = id });
             return Ok(result);
@@ -82,6 +82,29 @@ namespace MovieReservation.Server.Web.Controllers
         public async Task<ActionResult<int>> UpdateGenre(UpdateGenreCommand command) {
             await Sender.Send(command);
             return NoContent(); // 204
+        }
+
+        // [Authorize(Roles = "Admin")]
+        [HttpDelete("delete/{id:int}")]
+        public async Task<ActionResult> DeleteGenre(int id)
+        {
+            try
+            {
+                await Sender.Send(new DeleteGenreCommand { Id = id });
+                return NoContent(); // 204
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (ConflictException ex)
+            {
+                return Conflict(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred", detail = ex.Message });
+            }
         }
 
     }
