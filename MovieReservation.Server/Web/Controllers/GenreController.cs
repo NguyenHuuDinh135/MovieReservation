@@ -86,11 +86,11 @@ namespace MovieReservation.Server.Web.Controllers
 
         // [Authorize(Roles = "Admin")]
         [HttpDelete("delete/{id:int}")]
-        public async Task<ActionResult> DeleteGenre(int id)
+        public async Task<ActionResult> DeleteGenre(DeleteGenreCommand command)
         {
             try
             {
-                await Sender.Send(new DeleteGenreCommand { Id = id });
+                await Sender.Send(command);
                 return NoContent(); // 204
             }
             catch (NotFoundException ex)

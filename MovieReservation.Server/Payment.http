@@ -1,0 +1,53 @@
+@MovieReservation.Server_HostAddress = http://localhost:5178
+
+###
+# Get all payments (no token required)
+GET {{MovieReservation.Server_HostAddress}}/api/payments/all
+Accept: application/json
+
+###
+
+# Get payment by id
+GET {{MovieReservation.Server_HostAddress}}/api/payments/id/1
+Accept: application/json
+
+###
+
+# Get payments for a user (replace id)
+GET {{MovieReservation.Server_HostAddress}}/api/payments/users/2b6dfb56-8a4d-4df7-8b9f-b2d0a18bb58e
+Accept: application/json
+
+###
+
+# Create a payment
+POST {{MovieReservation.Server_HostAddress}}/api/payments/create
+Content-Type: application/json
+
+{
+  "amount": 1400,
+  "paymentDateTime": "2021-03-20T06:30:00",
+  "method": "Card",
+  "userId": "2b6dfb56-8a4d-4df7-8b9f-b2d0a18bb58e",
+  "showId": 14
+}
+
+###
+
+# Update a payment
+PUT {{MovieReservation.Server_HostAddress}}/api/payments/update
+Content-Type: application/json
+
+{
+  "id": 1,
+  "amount": 1500,
+  "paymentDateTime": "2021-03-20T07:00:00",
+  "method": "Card",
+  "userId": "2b6dfb56-8a4d-4df7-8b9f-b2d0a18bb58e",
+  "showId": 14
+}
+
+###
+
+# Delete a payment by id
+DELETE {{MovieReservation.Server_HostAddress}}/api/payments/delete/1
+Accept: application/json
