@@ -4,7 +4,7 @@ import { siteConfig } from "@/config/site" // ✅ Lấy cấu hình site (mainNa
 import { Icons } from "@/components/icons"
 import { MainNav } from "@/components/main-nav"
 import { MobileNav } from "@/components/mobile-nav"
-import { NavUser } from "@/components/nav-user"
+import { NavUser } from "@/components/nav-user-v1"
 import { ModeSwitcher } from "@/components/mode-switcher"
 import { Button } from "@/components/ui/button" // ✅ Đảm bảo import đúng từ UI của bạn
 import { Separator } from "@/components/ui/separator"
