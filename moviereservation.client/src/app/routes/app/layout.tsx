@@ -1,4 +1,4 @@
-import { SiteHeader } from '@/components/site-header';
+import { SiteHeader } from '@/components/site-header-v1';
 
 import { SiteFooter } from '@/components/site-footer';
 import { Outlet } from 'react-router';
