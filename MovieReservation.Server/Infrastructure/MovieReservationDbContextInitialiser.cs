@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using MovieReservation.Server.Infrastructure.Authorization;
 using System;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 namespace MovieReservation.Server.Infrastructure
 {
@@ -125,6 +127,43 @@ namespace MovieReservation.Server.Infrastructure
                     }
                 }
             }
+
+            // --- Seed sample permissions into AspNetRoleClaims and AspNetUserClaims ---
+            var permissions = new[]
+            {
+                "Permission.ManagePermissions",
+                "Permission.Payments.Create",
+                "Permission.Payments.Edit",
+                "Permission.Payments.Delete",
+                "Permission.Payments.View"
+            };
+
+            // assign all sample permissions to Admin role
+            var adminRole = await _roleManager.FindByNameAsync("Admin");
+            if (adminRole != null)
+            {
+                var roleClaims = await _roleManager.GetClaimsAsync(adminRole);
+                foreach (var p in permissions)
+                {
+                    if (!roleClaims.Any(c => c.Type == PermissionConstants.Permission && c.Value == p))
+                    {
+                        await _roleManager.AddClaimAsync(adminRole, new Claim(PermissionConstants.Permission, p));
+                    }
+                }
+            }
+
+            // give a specific user one direct permission (example: user2)
+            var sampleUser = await _userManager.FindByIdAsync(user2Id);
+            if (sampleUser != null)
+            {
+                var userClaims = await _userManager.GetClaimsAsync(sampleUser);
+                var directPermission = "Permission.Payments.View";
+                if (!userClaims.Any(c => c.Type == PermissionConstants.Permission && c.Value == directPermission))
+                {
+                    await _userManager.AddClaimAsync(sampleUser, new Claim(PermissionConstants.Permission, directPermission));
+                }
+            }
+            // --- end permissions seeding ---
 
             // Seed Genres
             if (!_context.Genres.Any())
