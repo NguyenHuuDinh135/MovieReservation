@@ -12,19 +12,20 @@ import { toast } from "sonner"
 import { GalleryVerticalEnd } from "lucide-react"
 import { paths } from '@/config/paths';
 import { Icons } from "./icons";
+import apiClient from "@/lib/api-client"
 
 type FormData = z.infer<typeof registerSchema>
 
 export function RegisterForm({
   className,
   ...props
-}: React.ComponentProps<"div">) {
+}: React.HTMLAttributes<HTMLDivElement>) {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>({
-    resolver: zodResolver(registerSchema)
+    resolver: zodResolver(registerSchema),
   })
   const navigate = useNavigate()
   const location = useLocation()
@@ -35,36 +36,30 @@ export function RegisterForm({
 
   async function onSubmit(data: FormData) {
     setIsLoading(true)
-    const response = await fetch("/api/auth/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        userName: data.name,
-        email: data.email,
-        password: data.password,
-        callbackUrl: redirectTo || paths.home.path,
-      }),
-    })
-    const registerResult = await response.json()
-    toast("Registration successfully", { 
-          description: "Please verify OTP to continue", 
-          action: {
-            label: "Undo",
-            onClick: () => console.log("Undo"),
-          }
-        })
-    setIsLoading(false)
-    navigate(paths.auth.otp.getHref(), {
-      state: {
-        email: registerResult.email,
-        from: location.state?.from,
-      },
-    })
-    
+    try {
+      const res = await apiClient.auth.register({
+        userName: (data as any).userName ?? (data as any).username ?? "",
+        email: (data as any).email,
+        password: (data as any).password,
+      })
+      const result = res.data
+      toast("Registration submitted", {
+        description: "Please verify OTP sent to your email",
+      })
+      navigate(paths.auth.otp.getHref(), {
+        state: {
+          email: result.email,
+          from: location.state?.from,
+        },
+      })
+    } catch (err: any) {
+      console.error("Register error:", err)
+      const msg = err?.response?.data?.message || err?.message || "Registration failed"
+      toast("Registration failed", { description: String(msg) })
+    } finally {
+      setIsLoading(false)
+    }
   }
-
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -85,56 +80,26 @@ export function RegisterForm({
 
           <div className="flex flex-col gap-6">
             <div className="grid gap-3">
-              <Label htmlFor="name">User Name</Label>
-              <Input
-                id="name"
-                placeholder="John Doe"
-                disabled={isLoading || isGoogleLoading}
-                {...register("name")}
-                required
-              />
-              {errors.name && (
-                <p className="px-1 text-xs text-red-600">{errors.name.message}</p>
-              )}
+              <Label htmlFor="userName">Username</Label>
+              <Input id="userName" {...register("userName" as any)} placeholder="johndoe" required />
+              {errors?.userName && <p className="px-1 text-xs text-red-600">{(errors as any).userName?.message}</p>}
             </div>
 
             <div className="grid gap-3">
               <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="m@example.com"
-                // value="dinhknd3@gmail.com" // ⚠️ Xóa dòng này khi deploy
-                disabled={isLoading || isGoogleLoading}
-                {...register("email")}
-                required
-              />
-              {errors.email && (
-                <p className="px-1 text-xs text-red-600">{errors.email.message}</p>
-              )}
+              <Input id="email" type="email" {...register("email" as any)} placeholder="m@example.com" required />
+              {errors?.email && <p className="px-1 text-xs text-red-600">{(errors as any).email?.message}</p>}
             </div>
 
             <div className="grid gap-3">
               <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="********"
-                // value="User@123" // ⚠️ Xóa dòng này khi deploy
-                disabled={isLoading || isGoogleLoading}
-                {...register("password")}
-                required
-              />
-              {errors.password && (
-                <p className="px-1 text-xs text-red-600">{errors.password.message}</p>
-              )}
+              <Input id="password" type="password" {...register("password" as any)} placeholder="********" required />
+              {errors?.password && <p className="px-1 text-xs text-red-600">{(errors as any).password?.message}</p>}
             </div>
 
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading && (
-                <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-              )}
-              Sign Up
+              {isLoading && <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />}
+              Sign up
             </Button>
           </div>
 
