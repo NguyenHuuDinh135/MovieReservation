@@ -31,5 +31,40 @@ export const paths = {
       path: '',
       getHref: () => '/app',
     },
+  },
+
+  admin: {
+    root: {
+      path: '/admin',
+      getHref: () => '/admin',
+    },
+    dashboard: {
+      path: '/admin/dashboard',
+      getHref: () => '/admin/dashboard',
+    },
+    movies: {
+      path: '/admin/movies',
+      getHref: () => '/admin/movies',
+    },
+    cinemas: {
+      path: '/admin/cinemas',
+      getHref: () => '/admin/cinemas',
+    },
+    showtimes: {
+      path: '/admin/showtimes',
+      getHref: () => '/admin/showtimes',
+    },
+    bookings: {
+      path: '/admin/bookings',
+      getHref: () => '/admin/bookings',
+    },
+    users: {
+      path: '/admin/users',
+      getHref: () => '/admin/users',
+    },
+    settings: {
+      path: '/admin/settings',
+      getHref: () => '/admin/settings',
+    },
   }
 } as const;
