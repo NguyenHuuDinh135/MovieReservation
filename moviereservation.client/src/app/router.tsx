@@ -40,6 +40,44 @@ export const createAppRouter = (queryClient: QueryClient) =>
       lazy: () => import('./routes/auth/otp/page').then(convert(queryClient)),
     },
     {
+      path: paths.admin.root.path,
+      lazy: () => import('./routes/admin/layout').then(convert(queryClient)),
+      children: [
+        {
+          index: true,
+          lazy: () => import('./routes/admin/dashboard/page').then(convert(queryClient)),
+        },
+        {
+          path: 'dashboard',
+          lazy: () => import('./routes/admin/dashboard/page').then(convert(queryClient)),
+        },
+        {
+          path: 'movies',
+          lazy: () => import('./routes/admin/movies/page').then(convert(queryClient)),
+        },
+        {
+          path: 'cinemas',
+          lazy: () => import('./routes/admin/theaters/page').then(convert(queryClient)),
+        },
+        {
+          path: 'showtimes',
+          lazy: () => import('./routes/admin/showtimes/page').then(convert(queryClient)),
+        },
+        {
+          path: 'bookings',
+          lazy: () => import('./routes/admin/bookings/page').then(convert(queryClient)),
+        },
+        {
+          path: 'users',
+          lazy: () => import('./routes/admin/users/page').then(convert(queryClient)),
+        },
+        {
+          path: 'settings',
+          lazy: () => import('./routes/admin/settings/page').then(convert(queryClient)),
+        },
+      ],
+    },
+    {
       path: paths.home.path,
       element: <AppRoot children />,
       ErrorBoundary: AppRootErrorBoundary,

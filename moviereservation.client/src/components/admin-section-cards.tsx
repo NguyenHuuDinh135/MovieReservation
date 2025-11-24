@@ -10,93 +10,92 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
-export function AdminSectionCards() {
+const currencyFormatter = new Intl.NumberFormat("vi-VN", {
+  style: "currency",
+  currency: "VND",
+  maximumFractionDigits: 0,
+})
+
+type AdminStats = {
+  revenue?: number
+  tickets?: number
+  movies?: number
+  shows?: number
+}
+
+type AdminSectionCardsProps = {
+  stats?: AdminStats
+  isLoading?: boolean
+}
+
+const formatNumber = (value?: number, isCurrency = false) => {
+  if (value === undefined) return "—"
+  return isCurrency
+    ? currencyFormatter.format(value)
+    : new Intl.NumberFormat("vi-VN").format(value)
+}
+
+export function AdminSectionCards({
+  stats,
+  isLoading,
+}: AdminSectionCardsProps) {
+  const cards = [
+    {
+      label: "Tổng Doanh Thu",
+      value: formatNumber(stats?.revenue, true),
+      helper: "Thống kê từ bảng Payments",
+      trend: "+15.2%",
+      icon: <IconTrendingUp />,
+    },
+    {
+      label: "Tổng Vé Đã Bán",
+      value: formatNumber(stats?.tickets),
+      helper: "Số lượng booking hợp lệ",
+      trend: "+8.5%",
+      icon: <IconTrendingUp />,
+    },
+    {
+      label: "Số Phim",
+      value: formatNumber(stats?.movies),
+      helper: "Bao gồm tất cả trạng thái phim",
+      trend: "+3 phim mới",
+      icon: <IconTrendingUp />,
+    },
+    {
+      label: "Số Suất Chiếu",
+      value: formatNumber(stats?.shows),
+      helper: "Đếm từ bảng Shows",
+      trend: "-2 suất lỗi",
+      icon: <IconTrendingDown />,
+    },
+  ]
+
   return (
     <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
-      <Card className="@container/card">
-        <CardHeader>
-          <CardDescription>Tổng Doanh Thu</CardDescription>
-          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            125,000,000₫
-          </CardTitle>
-          <CardAction>
-            <Badge variant="outline">
-              <IconTrendingUp />
-              +15.2%
-            </Badge>
-          </CardAction>
-        </CardHeader>
-        <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="line-clamp-1 flex gap-2 font-medium">
-            Tăng trưởng tháng này <IconTrendingUp className="size-4" />
-          </div>
-          <div className="text-muted-foreground">
-            So với tháng trước
-          </div>
-        </CardFooter>
-      </Card>
-      <Card className="@container/card">
-        <CardHeader>
-          <CardDescription>Tổng Số Vé Đã Bán</CardDescription>
-          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            12,345
-          </CardTitle>
-          <CardAction>
-            <Badge variant="outline">
-              <IconTrendingUp />
-              +8.5%
-            </Badge>
-          </CardAction>
-        </CardHeader>
-        <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="line-clamp-1 flex gap-2 font-medium">
-            Tăng so với kỳ trước <IconTrendingUp className="size-4" />
-          </div>
-          <div className="text-muted-foreground">
-            Tổng số vé trong tháng
-          </div>
-        </CardFooter>
-      </Card>
-      <Card className="@container/card">
-        <CardHeader>
-          <CardDescription>Số Phim Đang Chiếu</CardDescription>
-          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            24
-          </CardTitle>
-          <CardAction>
-            <Badge variant="outline">
-              <IconTrendingUp />
-              +3
-            </Badge>
-          </CardAction>
-        </CardHeader>
-        <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="line-clamp-1 flex gap-2 font-medium">
-            Phim mới trong tuần <IconTrendingUp className="size-4" />
-          </div>
-          <div className="text-muted-foreground">Tổng số phim đang chiếu</div>
-        </CardFooter>
-      </Card>
-      <Card className="@container/card">
-        <CardHeader>
-          <CardDescription>Tổng Số Người Dùng</CardDescription>
-          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            5,678
-          </CardTitle>
-          <CardAction>
-            <Badge variant="outline">
-              <IconTrendingUp />
-              +12.3%
-            </Badge>
-          </CardAction>
-        </CardHeader>
-        <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="line-clamp-1 flex gap-2 font-medium">
-            Người dùng mới <IconTrendingUp className="size-4" />
-          </div>
-          <div className="text-muted-foreground">Tăng trưởng ổn định</div>
-        </CardFooter>
-      </Card>
+      {cards.map((card) => (
+        <Card key={card.label} className="@container/card">
+          <CardHeader>
+            <CardDescription>{card.label}</CardDescription>
+            <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
+              {isLoading ? "Đang tải..." : card.value}
+            </CardTitle>
+            <CardAction>
+              <Badge variant="outline">
+                {card.icon}
+                {card.trend}
+              </Badge>
+            </CardAction>
+          </CardHeader>
+          <CardFooter className="flex-col items-start gap-1.5 text-sm">
+            <div className="line-clamp-1 flex gap-2 font-medium">
+              {card.helper}
+            </div>
+            <div className="text-muted-foreground">
+              Dữ liệu cập nhật theo thời gian thực
+            </div>
+          </CardFooter>
+        </Card>
+      ))}
     </div>
   )
 }
