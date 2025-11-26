@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using MovieReservation.Server.Infrastructure.Authorization;
 using System;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 namespace MovieReservation.Server.Infrastructure
 {
@@ -93,8 +95,8 @@ namespace MovieReservation.Server.Infrastructure
             {
                 new { Id = user1Id, Email = "proladinh144@gmail.com", Password = "Admin@123", Address = "Karachi", Contact = "+923009999999", Role = "Admin" },
                 new { Id = user2Id, Email = "dinhknd3@gmail.com", Password = "User@123", Address = "Karachi", Contact = "+923009999999", Role = "ApiUser" },
-                new { Id = user3Id, Email = "arafaysaleem@gmail.com", Password = "User@123", Address = "Karachi", Contact = "+923009999999", Role = "ApiUser" },
-                new { Id = user4Id, Email = "user2@gmail.com", Password = "User@123", Address = "Karachi", Contact = "+923009999999", Role = "ApiUser" },
+                new { Id = user3Id, Email = "qvinhkl10@gmail.com", Password = "User@123", Address = "Karachi", Contact = "+923009999999", Role = "Admin" },
+                new { Id = user4Id, Email = "qvinhkl01@gmail.com", Password = "User@123", Address = "Karachi", Contact = "+923009999999", Role = "ApiUser" },
                 new { Id = user5Id, Email = "user3@gmail.com", Password = "User@123", Address = "Karachi", Contact = "+923009999999", Role = "ApiUser" },
                 new { Id = user6Id, Email = "deleteme@eztickets.com", Password = "User@123", Address = "Re", Contact = "+923009268622", Role = "ApiUser" },
                 new { Id = user7Id, Email = "user4@gmail.com", Password = "User@123", Address = "Lahore", Contact = "+923001234567", Role = "ApiUser" },
@@ -125,6 +127,61 @@ namespace MovieReservation.Server.Infrastructure
                     }
                 }
             }
+
+            // --- Seed permissions into AspNetRoleClaims and AspNetUserClaims ---
+            // Lấy tất cả permissions từ PermissionConstants
+            var allPermissions = PermissionConstants.Permissions.GetAll();
+
+            // Gán TẤT CẢ permissions cho Admin role (full access)
+            var adminRole = await _roleManager.FindByNameAsync("Admin");
+            if (adminRole != null)
+            {
+                var adminRoleClaims = await _roleManager.GetClaimsAsync(adminRole);
+                foreach (var permission in allPermissions)
+                {
+                    if (!adminRoleClaims.Any(c => c.Type == PermissionConstants.Permission && c.Value == permission))
+                    {
+                        await _roleManager.AddClaimAsync(adminRole, new Claim(PermissionConstants.Permission, permission));
+                    }
+                }
+            }
+
+            // Gán một số permissions cơ bản cho ApiUser role (read-only access)
+            var apiUserRole = await _roleManager.FindByNameAsync("ApiUser");
+            if (apiUserRole != null)
+            {
+                var apiUserRoleClaims = await _roleManager.GetClaimsAsync(apiUserRole);
+                var apiUserPermissions = new[]
+                {
+                    PermissionConstants.Permissions.MoviesView,
+                    PermissionConstants.Permissions.ShowsView,
+                    PermissionConstants.Permissions.TheatersView,
+                    PermissionConstants.Permissions.BookingsView,
+                    PermissionConstants.Permissions.GenresView
+                };
+
+                foreach (var permission in apiUserPermissions)
+                {
+                    if (!apiUserRoleClaims.Any(c => c.Type == PermissionConstants.Permission && c.Value == permission))
+                    {
+                        await _roleManager.AddClaimAsync(apiUserRole, new Claim(PermissionConstants.Permission, permission));
+                    }
+                }
+            }
+
+            // Gán permission trực tiếp cho một user cụ thể (ví dụ: user2)
+            // Đây là ví dụ về cách gán permission trực tiếp cho user (không thông qua role)
+            var sampleUser = await _userManager.FindByIdAsync(user2Id);
+            if (sampleUser != null)
+            {
+                var userClaims = await _userManager.GetClaimsAsync(sampleUser);
+                var directPermission = PermissionConstants.Permissions.PaymentsView;
+                if (!userClaims.Any(c => c.Type == PermissionConstants.Permission && c.Value == directPermission))
+                {
+                    await _userManager.AddClaimAsync(sampleUser, new Claim(PermissionConstants.Permission, directPermission));
+                }
+            }
+            // --- end permissions seeding ---
 
             // Seed Genres
             if (!_context.Genres.Any())
