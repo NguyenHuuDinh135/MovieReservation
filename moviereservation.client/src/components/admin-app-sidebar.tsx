@@ -10,12 +10,13 @@ import {
   IconUsers,
   IconSettings,
   IconSearch,
+  IconCategory,
 } from "@tabler/icons-react"
 import { Link, useLocation } from "react-router-dom"
 
 import { NavMain } from "@/components/nav-main"
 import { NavSecondary } from "@/components/nav-secondary"
-import { NavUser } from "@/components/nav-user"
+import { NavUser } from "@/components/admin-nav"
 import {
   Sidebar,
   SidebarContent,
@@ -42,6 +43,11 @@ const data = {
       title: "Phim",
       url: "/admin/movies",
       icon: IconMovie,
+    },
+    {
+      title: "Thể Loại",
+      url: "/admin/genres",
+      icon: IconCategory,
     },
     {
       title: "Rạp Chiếu",

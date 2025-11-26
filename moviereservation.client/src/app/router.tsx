@@ -56,6 +56,10 @@ export const createAppRouter = (queryClient: QueryClient) =>
           lazy: () => import('./routes/admin/movies/page').then(convert(queryClient)),
         },
         {
+          path: 'genres',
+          lazy: () => import('./routes/admin/genres/page').then(convert(queryClient)),
+        },
+        {
           path: 'cinemas',
           lazy: () => import('./routes/admin/theaters/page').then(convert(queryClient)),
         },

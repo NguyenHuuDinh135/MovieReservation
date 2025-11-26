@@ -1,6 +1,10 @@
+import * as React from "react"
+import { Controller, useForm } from "react-hook-form"
+import { IconPencil, IconPlus, IconTrash } from "@tabler/icons-react"
+
 import { AdminDataState } from "@/components/admin-data-state"
-import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -8,6 +12,24 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import {
   Table,
   TableBody,
@@ -17,7 +39,15 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { useAdminMovies } from "@/hooks/use-admin-data"
-import { IconPlus } from "@tabler/icons-react"
+import { useAdminMoviesMutations } from "@/hooks/use-admin-mutations"
+import type {
+  CreateMovieCommand,
+  MovieDto,
+  MovieType,
+  UpdateMovieCommand,
+} from "@/lib/api-admin"
+
+const movieTypes: MovieType[] = ["ComingSoon", "NowShowing", "Removed"]
 
 export default function AdminMoviesPage() {
   const {
@@ -28,6 +58,62 @@ export default function AdminMoviesPage() {
     refetch,
   } = useAdminMovies()
 
+  const { createMovie, updateMovie, deleteMovie } = useAdminMoviesMutations()
+  const [isCreateOpen, setCreateOpen] = React.useState(false)
+  const [editingMovie, setEditingMovie] = React.useState<MovieDto | null>(null)
+
+  const createForm = useForm<CreateMovieCommand>({
+    defaultValues: {
+      title: "",
+      year: new Date().getFullYear(),
+      summary: "",
+      trailerUrl: "",
+      posterUrl: "",
+      movieType: "ComingSoon",
+    },
+  })
+
+  const updateForm = useForm<UpdateMovieCommand>({
+    defaultValues: { id: 0, movieType: "NowShowing" },
+  })
+
+  React.useEffect(() => {
+    if (editingMovie) {
+      updateForm.reset({
+        id: editingMovie.id,
+        movieType: (editingMovie.movieType?.toString() ||
+          "NowShowing") as MovieType,
+      })
+    }
+  }, [editingMovie, updateForm])
+
+  const closeCreateDialog = () => {
+    setCreateOpen(false)
+    createForm.reset()
+  }
+
+  const closeEditDialog = () => {
+    setEditingMovie(null)
+    updateForm.reset()
+  }
+
+  const handleDeleteMovie = (movie: MovieDto) => {
+    if (!window.confirm(`Xác nhận xóa phim "${movie.title}"?`)) return
+    deleteMovie.mutate(movie.id)
+  }
+
+  const onSubmitCreate = (values: CreateMovieCommand) => {
+    createMovie.mutate(values, {
+      onSuccess: closeCreateDialog,
+    })
+  }
+
+  const onSubmitUpdate = (values: UpdateMovieCommand) => {
+    updateMovie.mutate(values, {
+      onSuccess: closeEditDialog,
+    })
+  }
+
   return (
     <div className="px-4 lg:px-6">
       <div className="mb-6 flex items-center justify-between">
@@ -37,10 +123,107 @@ export default function AdminMoviesPage() {
             Danh sách phim từ hệ thống backend
           </p>
         </div>
-        <Button>
-          <IconPlus className="mr-2 h-4 w-4" />
-          Thêm Phim Mới
-        </Button>
+        <Dialog open={isCreateOpen} onOpenChange={setCreateOpen}>
+          <DialogTrigger asChild>
+            <Button>
+              <IconPlus className="mr-2 h-4 w-4" />
+              Thêm Phim Mới
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Thêm phim mới</DialogTitle>
+              <DialogDescription>
+                Điền đầy đủ thông tin để tạo phim trong hệ thống.
+              </DialogDescription>
+            </DialogHeader>
+            <form
+              className="space-y-4"
+              onSubmit={createForm.handleSubmit(onSubmitCreate)}
+            >
+              <div className="grid gap-2">
+                <Label htmlFor="title">Tiêu đề</Label>
+                <Input
+                  id="title"
+                  placeholder="Ví dụ: Gọi Tên Em Đi"
+                  {...createForm.register("title", { required: true })}
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="year">Năm phát hành</Label>
+                <Input
+                  id="year"
+                  type="number"
+                  min={1900}
+                  max={2100}
+                  {...createForm.register("year", { valueAsNumber: true })}
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="summary">Tóm tắt</Label>
+                <textarea
+                  id="summary"
+                  className="border-input focus-visible:ring-ring min-h-[120px] w-full rounded-md border bg-background px-3 py-2 text-sm outline-none transition focus-visible:ring-2 focus-visible:ring-offset-2"
+                  {...createForm.register("summary", { required: true })}
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="posterUrl">Poster URL</Label>
+                <Input
+                  id="posterUrl"
+                  placeholder="https://..."
+                  {...createForm.register("posterUrl")}
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="trailerUrl">Trailer URL</Label>
+                <Input
+                  id="trailerUrl"
+                  placeholder="https://youtube.com/..."
+                  {...createForm.register("trailerUrl")}
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label>Trạng thái</Label>
+                <Controller
+                  control={createForm.control}
+                  name="movieType"
+                  render={({ field }) => (
+                    <Select
+                      value={field.value?.toString()}
+                      onValueChange={(value) =>
+                        field.onChange(value as MovieType)
+                      }
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Chọn trạng thái" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {movieTypes.map((type) => (
+                          <SelectItem key={type} value={String(type)}>
+                            {type}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+              </div>
+              <DialogFooter>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={closeCreateDialog}
+                >
+                  Hủy
+                </Button>
+                <Button type="submit" disabled={createMovie.isPending}>
+                  {createMovie.isPending ? "Đang lưu..." : "Tạo mới"}
+                </Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
       </div>
       <Card>
         <CardHeader>
@@ -66,6 +249,7 @@ export default function AdminMoviesPage() {
                   <TableHead>Loại phim</TableHead>
                   <TableHead>Điểm</TableHead>
                   <TableHead>Thể loại</TableHead>
+                  <TableHead className="w-[160px] text-right">Hành động</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -101,6 +285,27 @@ export default function AdminMoviesPage() {
                         <span className="text-xs">Chưa có thể loại</span>
                       )}
                     </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={() => setEditingMovie(movie)}
+                        >
+                          <IconPencil className="size-4" />
+                          <span className="sr-only">Chỉnh sửa</span>
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="text-destructive hover:text-destructive"
+                          onClick={() => handleDeleteMovie(movie)}
+                        >
+                          <IconTrash className="size-4" />
+                          <span className="sr-only">Xóa</span>
+                        </Button>
+                      </div>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -108,6 +313,57 @@ export default function AdminMoviesPage() {
           </AdminDataState>
         </CardContent>
       </Card>
+
+      <Dialog open={Boolean(editingMovie)} onOpenChange={(value) => !value && closeEditDialog()}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Cập nhật phim</DialogTitle>
+            <DialogDescription>
+              Điều chỉnh trạng thái phim để quản lý lịch chiếu.
+            </DialogDescription>
+          </DialogHeader>
+          <form
+            className="space-y-4"
+            onSubmit={updateForm.handleSubmit(onSubmitUpdate)}
+          >
+            <Input type="hidden" {...updateForm.register("id", { valueAsNumber: true })} />
+            <div className="grid gap-2">
+              <Label>Trạng thái</Label>
+              <Controller
+                control={updateForm.control}
+                name="movieType"
+                render={({ field }) => (
+                  <Select
+                    value={field.value?.toString()}
+                    onValueChange={(value) =>
+                      field.onChange(value as MovieType)
+                    }
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Chọn trạng thái" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {movieTypes.map((type) => (
+                        <SelectItem key={type} value={String(type)}>
+                          {type}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={closeEditDialog}>
+                Hủy
+              </Button>
+              <Button type="submit" disabled={updateMovie.isPending}>
+                {updateMovie.isPending ? "Đang lưu..." : "Cập nhật"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react"
+import * as React from "react"
 
 import { AdminDataState } from "@/components/admin-data-state"
 import { Badge } from "@/components/ui/badge"
@@ -15,8 +15,8 @@ import { useAdminBookingsByUser } from "@/hooks/use-admin-data"
 import { IconSearch } from "@tabler/icons-react"
 
 export default function AdminUsersPage() {
-  const [userIdInput, setUserIdInput] = useState("")
-  const [selectedUserId, setSelectedUserId] = useState<string | undefined>()
+  const [userIdInput, setUserIdInput] = React.useState("")
+  const [selectedUserId, setSelectedUserId] = React.useState<string | undefined>()
   const {
     data: bookingsByUser = [],
     isLoading,
@@ -25,7 +25,7 @@ export default function AdminUsersPage() {
     refetch,
   } = useAdminBookingsByUser(selectedUserId)
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     setSelectedUserId(userIdInput.trim() || undefined)
   }
