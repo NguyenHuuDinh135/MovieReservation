@@ -1,28 +1,25 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using MovieReservation.Server.Domain.Entities;
+using MovieReservation.Server.Application.Permissions.Commands.AddPermissionToRole;
+using MovieReservation.Server.Application.Permissions.Commands.AddPermissionToUser;
+using MovieReservation.Server.Application.Permissions.Commands.RemovePermissionFromRole;
+using MovieReservation.Server.Application.Permissions.Commands.RemovePermissionFromUser;
+using MovieReservation.Server.Application.Permissions.Queries.GetAllPermissions;
+using MovieReservation.Server.Application.Permissions.Queries.GetAllRoles;
+using MovieReservation.Server.Application.Permissions.Queries.GetMyPermissions;
+using MovieReservation.Server.Application.Permissions.Queries.GetRolePermissions;
+using MovieReservation.Server.Application.Permissions.Queries.GetUserPermissions;
 using MovieReservation.Server.Infrastructure.Authorization;
-using System.Linq;
+using MovieReservation.Server.Web.Controllers;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace MovieReservation.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
     [Authorize] // ensure authenticated
-    public class PermissionsController : ControllerBase
+    public class PermissionsController : BaseController
     {
-        private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly UserManager<User> _userManager;
-
-        public PermissionsController(RoleManager<IdentityRole> roleManager, UserManager<User> userManager)
-        {
-            _roleManager = roleManager;
-            _userManager = userManager;
-        }
-
         public class PermissionDto
         {
             public string Permission { get; set; } = string.Empty;
@@ -32,23 +29,38 @@ namespace MovieReservation.Server.Controllers
         // Endpoint này không yêu cầu ManagePermissions vì user cần lấy permissions của chính mình
         // Chỉ cần authenticated (từ [Authorize] ở controller level)
         [HttpGet("me")]
-        public IActionResult GetMyPermissions()
+        public async Task<ActionResult<string[]>> GetMyPermissions()
         {
-            var permissions = User.GetPermissions().ToArray();
-            return Ok(permissions);
+            var result = await Sender.Send(new GetMyPermissionsQuery(User));
+            return Ok(result);
+        }
+
+        // GET api/permissions/all - Lấy tất cả permissions từ PermissionConstants
+        [RequirePermission("Permission.ManagePermissions")]
+        [HttpGet("all")]
+        public async Task<ActionResult<string[]>> GetAllPermissions()
+        {
+            var result = await Sender.Send(new GetAllPermissionsQuery());
+            return Ok(result);
         }
 
         // Role endpoints
-        // GET api/permissions/roles/{roleId}
+        // GET api/permissions/roles/all - Lấy tất cả roles
+        [RequirePermission("Permission.ManagePermissions")]
+        [HttpGet("roles/all")]
+        public async Task<ActionResult<List<AspRoleDto>>> GetAllRoles()
+        {
+            var result = await Sender.Send(new GetAllRolesQuery());
+            return Ok(result);
+        }
+
+        // GET api/permissions/roles/{roleId} - Lấy permissions của một role
         [RequirePermission("Permission.ManagePermissions")]
         [HttpGet("roles/{roleId}")]
-        public async Task<IActionResult> GetRolePermissions(string roleId)
+        public async Task<ActionResult<string[]>> GetRolePermissions(string roleId)
         {
-            var role = await _roleManager.FindByIdAsync(roleId);
-            if (role == null) return NotFound();
-            var claims = await _roleManager.GetClaimsAsync(role);
-            var permissions = claims.Where(c => c.Type == PermissionConstants.Permission).Select(c => c.Value).ToArray();
-            return Ok(permissions);
+            var result = await Sender.Send(new GetRolePermissionsQuery { RoleId = roleId });
+            return Ok(result);
         }
 
         // POST api/permissions/roles/{roleId}
@@ -56,13 +68,11 @@ namespace MovieReservation.Server.Controllers
         [HttpPost("roles/{roleId}")]
         public async Task<IActionResult> AddPermissionToRole(string roleId, [FromBody] PermissionDto dto)
         {
-            if (string.IsNullOrWhiteSpace(dto?.Permission)) return BadRequest("Permission is required.");
-            var role = await _roleManager.FindByIdAsync(roleId);
-            if (role == null) return NotFound();
-            var exists = (await _roleManager.GetClaimsAsync(role)).Any(c => c.Type == PermissionConstants.Permission && c.Value == dto.Permission);
-            if (exists) return Conflict("Permission already assigned to role.");
-            var res = await _roleManager.AddClaimAsync(role, new Claim(PermissionConstants.Permission, dto.Permission));
-            if (!res.Succeeded) return BadRequest(res.Errors);
+            await Sender.Send(new AddPermissionToRoleCommand
+            {
+                RoleId = roleId,
+                Permission = dto.Permission
+            });
             return Ok();
         }
 
@@ -71,12 +81,11 @@ namespace MovieReservation.Server.Controllers
         [HttpDelete("roles/{roleId}")]
         public async Task<IActionResult> RemovePermissionFromRole(string roleId, [FromBody] PermissionDto dto)
         {
-            if (string.IsNullOrWhiteSpace(dto?.Permission)) return BadRequest("Permission is required.");
-            var role = await _roleManager.FindByIdAsync(roleId);
-            if (role == null) return NotFound();
-            var claim = new Claim(PermissionConstants.Permission, dto.Permission);
-            var res = await _roleManager.RemoveClaimAsync(role, claim);
-            if (!res.Succeeded) return BadRequest(res.Errors);
+            await Sender.Send(new RemovePermissionFromRoleCommand
+            {
+                RoleId = roleId,
+                Permission = dto.Permission
+            });
             return NoContent();
         }
 
@@ -84,13 +93,10 @@ namespace MovieReservation.Server.Controllers
         // GET api/permissions/users/{userId}
         [RequirePermission("Permission.ManagePermissions")]
         [HttpGet("users/{userId}")]
-        public async Task<IActionResult> GetUserPermissions(string userId)
+        public async Task<ActionResult<string[]>> GetUserPermissions(string userId)
         {
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null) return NotFound();
-            var claims = await _userManager.GetClaimsAsync(user);
-            var permissions = claims.Where(c => c.Type == PermissionConstants.Permission).Select(c => c.Value).ToArray();
-            return Ok(permissions);
+            var result = await Sender.Send(new GetUserPermissionsQuery { UserId = userId });
+            return Ok(result);
         }
 
         // POST api/permissions/users/{userId}
@@ -98,13 +104,11 @@ namespace MovieReservation.Server.Controllers
         [HttpPost("users/{userId}")]
         public async Task<IActionResult> AddPermissionToUser(string userId, [FromBody] PermissionDto dto)
         {
-            if (string.IsNullOrWhiteSpace(dto?.Permission)) return BadRequest("Permission is required.");
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null) return NotFound();
-            var exists = (await _userManager.GetClaimsAsync(user)).Any(c => c.Type == PermissionConstants.Permission && c.Value == dto.Permission);
-            if (exists) return Conflict("Permission already assigned to user.");
-            var res = await _userManager.AddClaimAsync(user, new Claim(PermissionConstants.Permission, dto.Permission));
-            if (!res.Succeeded) return BadRequest(res.Errors);
+            await Sender.Send(new AddPermissionToUserCommand
+            {
+                UserId = userId,
+                Permission = dto.Permission
+            });
             return Ok();
         }
 
@@ -113,12 +117,11 @@ namespace MovieReservation.Server.Controllers
         [HttpDelete("users/{userId}")]
         public async Task<IActionResult> RemovePermissionFromUser(string userId, [FromBody] PermissionDto dto)
         {
-            if (string.IsNullOrWhiteSpace(dto?.Permission)) return BadRequest("Permission is required.");
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null) return NotFound();
-            var claim = new Claim(PermissionConstants.Permission, dto.Permission);
-            var res = await _userManager.RemoveClaimAsync(user, claim);
-            if (!res.Succeeded) return BadRequest(res.Errors);
+            await Sender.Send(new RemovePermissionFromUserCommand
+            {
+                UserId = userId,
+                Permission = dto.Permission
+            });
             return NoContent();
         }
     }

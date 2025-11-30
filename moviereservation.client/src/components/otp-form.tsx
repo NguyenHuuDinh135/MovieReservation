@@ -23,6 +23,7 @@ import { toast } from "sonner"
 import { Icons } from "./icons"
 import { paths } from "@/config/paths"
 import { setAccessToken } from "@/lib/auth"
+import { getRedirectPathAfterLogin } from "@/lib/api-permissions"
 
 type FormData = z.infer<typeof otpSchema>
 
@@ -87,8 +88,11 @@ export function OtpForm({
             description: "You have been logged in.",
           })
 
-          const from = location.state?.from?.pathname || paths.home.path
-          navigate(from, { 
+          // Determine redirect path: check if user is admin, redirect to /admin, otherwise use default
+          const defaultPath = location.state?.from?.pathname || paths.home.path
+          const redirectPath = await getRedirectPathAfterLogin(defaultPath)
+
+          navigate(redirectPath, { 
             state: {
               username: result.data.username,
               email: result.data.email,

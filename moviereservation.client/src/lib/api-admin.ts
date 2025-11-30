@@ -253,6 +253,27 @@ export interface UpdateGenreCommand {
   name: string
 }
 
+// --- Users DTOs ---
+export interface UserDto {
+  id: string
+  userName: string
+  email: string
+  phoneNumber?: string | null
+  address: string
+  contact: string
+  emailConfirmed: boolean
+  createdAt: string
+  updatedAt?: string | null
+  roles: string[]
+}
+
+// --- Roles DTOs (for roles, not movie roles) ---
+export interface IAMRoleDto {
+  id: string
+  name: string
+  normalizedName: string
+}
+
 // --- Movies endpoints ---
 export const moviesAdminApi = {
   getAll: () => api.get<MovieDto[]>('/movies/all'),
@@ -314,6 +335,12 @@ export const genresAdminApi = {
   delete: (id: number) => api.delete<void>(`/genre/delete/${id}`),
 }
 
+// --- Users endpoints ---
+export const usersAdminApi = {
+  getAll: () => api.get<UserDto[]>('/users/all'),
+  getById: (id: string) => api.get<UserDto>(`/users/id/${id}`),
+}
+
 const apiAdmin = {
   movies: moviesAdminApi,
   shows: showsAdminApi,
@@ -321,6 +348,7 @@ const apiAdmin = {
   bookings: bookingsAdminApi,
   payments: paymentsAdminApi,
   genres: genresAdminApi,
+  users: usersAdminApi,
 }
 
 export default apiAdmin

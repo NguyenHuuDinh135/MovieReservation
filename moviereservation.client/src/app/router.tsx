@@ -77,7 +77,33 @@ export const createAppRouter = (queryClient: QueryClient) =>
         },
         {
           path: 'settings',
-          lazy: () => import('./routes/admin/settings/page').then(convert(queryClient)),
+          lazy: () => import('./routes/admin/settings/layout').then(convert(queryClient)),
+          children: [
+            {
+              index: true,
+              lazy: () => import('./routes/admin/settings/page').then(convert(queryClient)),
+            },
+            {
+              path: 'users',
+              lazy: () => import('./routes/admin/settings/users/page').then(convert(queryClient)),
+            },
+            {
+              path: 'users/:userId/permissions',
+              lazy: () => import('./routes/admin/settings/users/[userId]/permissions/page').then(convert(queryClient)),
+            },
+            {
+              path: 'user-groups',
+              lazy: () => import('./routes/admin/settings/user-groups/page').then(convert(queryClient)),
+            },
+            {
+              path: 'user-groups/:roleId/permissions',
+              lazy: () => import('./routes/admin/settings/user-groups/[roleId]/permissions/page').then(convert(queryClient)),
+            },
+            {
+              path: 'roles',
+              lazy: () => import('./routes/admin/settings/roles/page').then(convert(queryClient)),
+            },
+          ],
         },
       ],
     },

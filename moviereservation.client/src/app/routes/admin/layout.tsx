@@ -1,6 +1,6 @@
 import * as React from "react"
-import { AppSidebar } from "@/components/admin-app-sidebar"
-import { SiteHeader } from "@/components/admin-site-header"
+import { AdminAppSidebar } from "@/components/admin-app-sidebar"
+import { AdminSiteHeader } from "@/components/admin-site-header"
 import {
   SidebarInset,
   SidebarProvider,
@@ -18,33 +18,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { AlertCircle } from "lucide-react"
-
-// Danh sách permissions được coi là "admin permissions"
-// User cần có ít nhất một trong các permissions này để truy cập admin
-const ADMIN_PERMISSIONS = [
-  "Permission.ManagePermissions",
-  "Permission.Movies.Create",
-  "Permission.Movies.Edit",
-  "Permission.Movies.Delete",
-  "Permission.Shows.Create",
-  "Permission.Shows.Edit",
-  "Permission.Shows.Delete",
-  "Permission.Theaters.Create",
-  "Permission.Theaters.Edit",
-  "Permission.Theaters.Delete",
-  "Permission.Bookings.Create",
-  "Permission.Bookings.Edit",
-  "Permission.Bookings.Delete",
-  "Permission.Genres.Create",
-  "Permission.Genres.Edit",
-  "Permission.Genres.Delete",
-  "Permission.Users.Create",
-  "Permission.Users.Edit",
-  "Permission.Users.Delete",
-  "Permission.Payments.Create",
-  "Permission.Payments.Edit",
-  "Permission.Payments.Delete",
-]
+import { ADMIN_PERMISSIONS } from "@/lib/api-permissions"
 
 export default function AdminLayout() {
   const location = useLocation()
@@ -145,12 +119,12 @@ export default function AdminLayout() {
         } as React.CSSProperties
       }
     >
-      <AppSidebar variant="inset" />
+      <AdminAppSidebar variant="inset" />
       <SidebarInset>
-        <SiteHeader />
+        <AdminSiteHeader />
         <div className="flex flex-1 flex-col">
           <div className="@container/main flex flex-1 flex-col gap-2">
-            <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+            <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6 relative">
               <Outlet />
             </div>
           </div>

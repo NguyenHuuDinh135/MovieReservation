@@ -16,7 +16,7 @@ const getPageTitle = (pathname: string): string => {
   return titles[pathname] || "Admin"
 }
 
-export function SiteHeader() {
+export function AdminSiteHeader() {
   const location = useLocation()
   const pageTitle = getPageTitle(location.pathname)
 

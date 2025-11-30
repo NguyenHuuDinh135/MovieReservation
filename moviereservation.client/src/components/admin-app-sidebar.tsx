@@ -11,11 +11,13 @@ import {
   IconSettings,
   IconSearch,
   IconCategory,
+  IconUsersGroup,
+  IconShield,
 } from "@tabler/icons-react"
 import { Link, useLocation } from "react-router-dom"
 
 import { NavMain } from "@/components/nav-main"
-import { NavSecondary } from "@/components/nav-secondary"
+import { NavSecondary, type NavSecondaryItem } from "@/components/nav-secondary"
 import { NavUser } from "@/components/admin-nav"
 import {
   Sidebar,
@@ -66,7 +68,7 @@ const data = {
       icon: IconTicket,
     },
     {
-      title: "Người Dùng",
+      title: "Hoạt Động Người Dùng",
       url: "/admin/users",
       icon: IconUsers,
     },
@@ -76,6 +78,23 @@ const data = {
       title: "Cài Đặt",
       url: "/admin/settings",
       icon: IconSettings,
+      items: [
+        {
+          title: "Nhóm Người Dùng",
+          url: "/admin/settings/user-groups",
+          icon: IconUsersGroup,
+        },
+        {
+          title: "Người Dùng",
+          url: "/admin/settings/users",
+          icon: IconUsers,
+        },
+        {
+          title: "Quyền",
+          url: "/admin/settings/roles",
+          icon: IconShield,
+        },
+      ],
     },
     {
       title: "Trợ Giúp",
@@ -90,7 +109,7 @@ const data = {
   ],
 }
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AdminAppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const location = useLocation()
   const [user, setUser] = React.useState(data.user)
 
@@ -129,7 +148,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} currentPath={location.pathname} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
+        <NavSecondary items={data.navSecondary} currentPath={location.pathname} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={user} />
@@ -137,5 +156,3 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     </Sidebar>
   )
 }
-
-

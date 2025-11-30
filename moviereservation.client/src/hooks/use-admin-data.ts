@@ -11,6 +11,7 @@ import apiAdmin, {
   type RolesForMovieDto,
   type ShowDto,
   type TheaterDto,
+  type UserDto,
 } from "@/lib/api-admin"
 
 const extractData = async <T>(promise: Promise<{ data: T }>) => {
@@ -95,6 +96,14 @@ export const useAdminMoviesOptions = () =>
     queryFn: fetchMovies,
   })
 
+const fetchUsers = () => extractData<UserDto[]>(apiAdmin.users.getAll())
+
+export const useAdminUsers = () =>
+  useQuery({
+    queryKey: ["admin", "users"],
+    queryFn: fetchUsers,
+  })
+
 export type AdminPaymentList = PaymentListItem[]
 export type AdminPaymentDetail = PaymentDetailBody
 export type AdminBooking = BookingDto
@@ -104,5 +113,6 @@ export type AdminTheater = TheaterDto
 export type AdminGenre = GenreByIdDto | GenreSummaryDto
 export type AdminMovieRoles = RolesForMovieDto | null
 export type AdminBookingsByUser = BookingsByUserDto[]
+export type AdminUser = UserDto
 
 

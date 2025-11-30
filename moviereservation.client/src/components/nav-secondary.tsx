@@ -1,8 +1,7 @@
-"use client"
-
 import * as React from "react"
 import { type Icon } from "@tabler/icons-react"
 import { Link } from "react-router-dom"
+import { IconChevronDown } from "@tabler/icons-react"
 
 import {
   SidebarGroup,
@@ -10,32 +9,112 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubItem,
+  SidebarMenuSubButton,
 } from "@/components/ui/sidebar"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
+
+export type NavSecondaryItem = {
+  title: string
+  url?: string
+  icon: Icon
+  items?: NavSecondaryItem[]
+}
 
 export function NavSecondary({
   items,
+  currentPath,
   ...props
 }: {
-  items: {
-    title: string
-    url: string
-    icon: Icon
-  }[]
+  items: NavSecondaryItem[]
+  currentPath?: string
 } & React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
+  const hasActiveSubItem = (item: NavSecondaryItem): boolean => {
+    if (!item.items) return false
+    return item.items.some(
+      (subItem) =>
+        (subItem.url && currentPath === subItem.url) ||
+        (subItem.url && currentPath?.startsWith(subItem.url + "/"))
+    )
+  }
+
+  const renderItem = (item: NavSecondaryItem) => {
+    const hasSubItems = item.items && item.items.length > 0
+    const isActive = Boolean(
+      (item.url && currentPath === item.url) ||
+      (item.url && currentPath?.startsWith(item.url + "/"))
+    )
+    const hasActiveChild = hasActiveSubItem(item)
+    const isOpen = hasActiveChild
+
+    if (hasSubItems) {
+      return (
+        <Collapsible key={item.title} defaultOpen={isOpen}>
+          <SidebarMenuItem>
+            <CollapsibleTrigger asChild>
+              <SidebarMenuButton tooltip={item.title} isActive={isActive || hasActiveChild}>
+                {item.icon && <item.icon />}
+                <span>{item.title}</span>
+                <IconChevronDown className="ml-auto transition-transform duration-200 data-[state=open]:rotate-180" />
+              </SidebarMenuButton>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <SidebarMenuSub>
+                {item.items!.map((subItem) => {
+                  const isSubActive = Boolean(
+                    (subItem.url && currentPath === subItem.url) ||
+                    (subItem.url && currentPath?.startsWith(subItem.url + "/"))
+                  )
+                  return (
+                    <SidebarMenuSubItem key={subItem.title}>
+                      {subItem.url ? (
+                        <SidebarMenuSubButton asChild isActive={isSubActive}>
+                          <Link to={subItem.url}>
+                            {subItem.icon && <subItem.icon />}
+                            <span>{subItem.title}</span>
+                          </Link>
+                        </SidebarMenuSubButton>
+                      ) : (
+                        <SidebarMenuSubButton isActive={isSubActive}>
+                          {subItem.icon && <subItem.icon />}
+                          <span>{subItem.title}</span>
+                        </SidebarMenuSubButton>
+                      )}
+                    </SidebarMenuSubItem>
+                  )
+                })}
+              </SidebarMenuSub>
+            </CollapsibleContent>
+          </SidebarMenuItem>
+        </Collapsible>
+      )
+    }
+
+    return (
+      <SidebarMenuItem key={item.title}>
+        {item.url ? (
+          <SidebarMenuButton tooltip={item.title} asChild isActive={isActive}>
+            <Link to={item.url}>
+              {item.icon && <item.icon />}
+              <span>{item.title}</span>
+            </Link>
+          </SidebarMenuButton>
+        ) : (
+          <SidebarMenuButton tooltip={item.title} isActive={isActive}>
+            {item.icon && <item.icon />}
+            <span>{item.title}</span>
+          </SidebarMenuButton>
+        )}
+      </SidebarMenuItem>
+    )
+  }
+
   return (
     <SidebarGroup {...props}>
-      <SidebarGroupContent>
+      <SidebarGroupContent className="flex flex-col gap-2">
         <SidebarMenu>
-          {items.map((item) => (
-            <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton asChild tooltip={item.title}>
-                <Link to={item.url}>
-                  <item.icon />
-                  <span>{item.title}</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
+          {items.map(renderItem)}
         </SidebarMenu>
       </SidebarGroupContent>
     </SidebarGroup>
