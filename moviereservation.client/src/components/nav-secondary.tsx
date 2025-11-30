@@ -1,7 +1,7 @@
 import * as React from "react"
 import { type Icon } from "@tabler/icons-react"
 import { Link } from "react-router-dom"
-import { IconChevronDown } from "@tabler/icons-react"
+import { IconChevronRight } from "@tabler/icons-react"
 
 import {
   SidebarGroup,
@@ -50,16 +50,16 @@ export function NavSecondary({
 
     if (hasSubItems) {
       return (
-        <Collapsible key={item.title} defaultOpen={isOpen}>
+        <Collapsible key={item.title} defaultOpen={isOpen} className="group/collapsible">
           <SidebarMenuItem>
             <CollapsibleTrigger asChild>
               <SidebarMenuButton tooltip={item.title} isActive={isActive || hasActiveChild}>
                 {item.icon && <item.icon />}
                 <span>{item.title}</span>
-                <IconChevronDown className="ml-auto transition-transform duration-200 data-[state=open]:rotate-180" />
+                <IconChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
               </SidebarMenuButton>
             </CollapsibleTrigger>
-            <CollapsibleContent>
+            <CollapsibleContent className="overflow-hidden transition-all data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
               <SidebarMenuSub>
                 {item.items!.map((subItem) => {
                   const isSubActive = Boolean(

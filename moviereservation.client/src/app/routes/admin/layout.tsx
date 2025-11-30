@@ -39,8 +39,8 @@ export default function AdminLayout() {
           "Bạn không có quyền truy cập vào trang quản trị. Vui lòng liên hệ quản trị viên.",
       })
       const timer = setTimeout(() => {
-        window.location.href = paths.auth.login.path
-      }, 2000)
+        window.location.href = paths.home.path
+      }, 5000)
       return () => clearTimeout(timer)
     }
   }, [token, isLoading, hasAdminPermission])

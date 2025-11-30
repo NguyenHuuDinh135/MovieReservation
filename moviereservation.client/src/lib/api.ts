@@ -39,6 +39,12 @@ const processQueue = (error: unknown, token: string | null = null) => {
 
 // Attach access token
 api.interceptors.request.use((config) => {
+  // Do NOT attach Authorization header when calling the refresh endpoint.
+  const url = (config.url || '').toString().toLowerCase()
+  if (url.includes('/auth/refresh-token')) {
+    return config
+  }
+
   const token = getAccessToken()
   if (token && config.headers) {
     config.headers['Authorization'] = `Bearer ${token}`
@@ -96,6 +102,7 @@ api.interceptors.response.use(
       } catch (refreshError) {
         processQueue(refreshError, null)
         isRefreshing = false
+        console.error('Refresh token failed:', refreshError)
         // clear tokens and redirect to login
         clearAccessToken()
         try {
