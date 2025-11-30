@@ -38,7 +38,7 @@ export const AppProvider = ({ children }: AppProviderProps) =>{
             )}
           >
             <QueryClientProvider client={queryClient}>
-              {import.meta.env.DEV && <ReactQueryDevtools />}
+              {/* {import.meta.env.DEV && <ReactQueryDevtools />} */}
               <ThemeProvider>
                 <LayoutProvider>
                   <ActiveThemeProvider>

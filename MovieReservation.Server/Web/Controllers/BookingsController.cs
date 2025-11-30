@@ -13,6 +13,7 @@ using MovieReservation.Server.Application.Bookings.Commands.CreateBooking;
 using MovieReservation.Server.Application.Bookings.Commands.UpdateBooking;
 using MovieReservation.Server.Application.Bookings.Queries.GetBookingsByUser;
 using MovieReservation.Server.Application.Bookings.Queries.GetBookingsByShow;
+using MovieReservation.Server.Infrastructure.Authorization;
 
 namespace MovieReservation.Server.Controllers
 {
@@ -21,7 +22,7 @@ namespace MovieReservation.Server.Controllers
     public class BookingsController : BaseController
     {
 
-        // [Authorize(Roles = "Admin")] 
+        [RequirePermission(PermissionConstants.Permissions.BookingsView)]
         [HttpGet("all")]
         public async Task<ActionResult<List<GetBookingsQuery>>> GetAllBookings()
         {
@@ -40,7 +41,7 @@ namespace MovieReservation.Server.Controllers
             }
         }
 
-        // [Authorize(Roles = "Admin,User")]
+        [RequirePermission(PermissionConstants.Permissions.BookingsView)]
         [HttpGet("id/{id:int}")]
         public async Task<ActionResult<BookingByIdDto>> GetBookingById(int id)
         {
@@ -63,7 +64,7 @@ namespace MovieReservation.Server.Controllers
             }
         }
 
-        // [Authorize(Roles = "Admin")]
+        [RequirePermission(PermissionConstants.Permissions.BookingsView)]
         [HttpGet("users/{id}")]
         public async Task<ActionResult<BookingsByUserDto>> GetBookingsByUser(String id)
         {
@@ -86,7 +87,7 @@ namespace MovieReservation.Server.Controllers
             }
         }
 
-        // [Authorize(Roles = "Admin")]
+        [RequirePermission(PermissionConstants.Permissions.BookingsView)]
         [HttpGet("shows/{id:int}")]
         public async Task<ActionResult<BookingsByShowDto>> GetBookingsByShow(int id)
         {
@@ -109,7 +110,7 @@ namespace MovieReservation.Server.Controllers
             }
         }
 
-        // [Authorize(Roles = "Admin,User")]
+        [RequirePermission(PermissionConstants.Permissions.BookingsCreate)]
         [HttpPost("create")]
         public async Task<ActionResult<int>> CreateBooking(CreateBookingCommand command)
         {
@@ -128,7 +129,7 @@ namespace MovieReservation.Server.Controllers
             }
         }
         
-        // [Authorize(Roles = "Admin,User")]
+        [RequirePermission(PermissionConstants.Permissions.BookingsEdit)]
         [HttpPut("update")]
         public async Task<ActionResult<Unit>> UpdateBooking(UpdateBookingCommand command)
         {
@@ -151,7 +152,7 @@ namespace MovieReservation.Server.Controllers
             }
         }
 
-        // [Authorize(Roles = "Admin,User")]
+        [RequirePermission(PermissionConstants.Permissions.BookingsDelete)]
         [HttpDelete("delete/{id:int}")]
         public async Task<ActionResult> DeleteBooking(int id)
         {

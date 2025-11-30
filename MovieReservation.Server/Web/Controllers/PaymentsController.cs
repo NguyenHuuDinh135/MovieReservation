@@ -7,6 +7,7 @@ using MovieReservation.Server.Application.Payments.Commands.UpdatePayment;
 using MovieReservation.Server.Application.Payments.Queries.GetPaymentById;
 using MovieReservation.Server.Application.Payments.Queries.GetPayments;
 using MovieReservation.Server.Application.Payments.Queries.GetPaymentsByUser;
+using MovieReservation.Server.Infrastructure.Authorization;
 
 namespace MovieReservation.Server.Web.Controllers
 {
@@ -15,6 +16,7 @@ namespace MovieReservation.Server.Web.Controllers
     public class PaymentsController : BaseController
     {
         // GET api/payments/all
+        [RequirePermission(PermissionConstants.Permissions.PaymentsView)]
         [HttpGet("all")]
         public async Task<IActionResult> GetAllPayments()
         {
@@ -45,6 +47,7 @@ namespace MovieReservation.Server.Web.Controllers
         }
 
         // GET api/payments/id/{id}
+        [RequirePermission(PermissionConstants.Permissions.PaymentsView)]
         [HttpGet("id/{id:int}")]
         public async Task<IActionResult> GetPaymentById(int id)
         {
@@ -74,6 +77,7 @@ namespace MovieReservation.Server.Web.Controllers
         }
 
         // GET api/payments/users/{id}
+        [RequirePermission(PermissionConstants.Permissions.PaymentsView)]
         [HttpGet("users/{id}")]
         public async Task<IActionResult> GetPaymentsByUser(string id)
         {
@@ -103,6 +107,7 @@ namespace MovieReservation.Server.Web.Controllers
         }
 
         // POST api/payments/create
+        [RequirePermission(PermissionConstants.Permissions.PaymentsCreate)]
         [HttpPost("create")]
         public async Task<IActionResult> CreatePayment(CreatePaymentCommand command)
         {
@@ -118,6 +123,7 @@ namespace MovieReservation.Server.Web.Controllers
         }
 
         // PUT api/payments/update
+        [RequirePermission(PermissionConstants.Permissions.PaymentsEdit)]
         [HttpPut("update")]
         public async Task<IActionResult> UpdatePayment(UpdatePaymentCommand command)
         {
@@ -137,6 +143,7 @@ namespace MovieReservation.Server.Web.Controllers
         }
 
         // DELETE api/payments/delete/{id}
+        [RequirePermission(PermissionConstants.Permissions.PaymentsDelete)]
         [HttpDelete("delete/{id:int}")]
         public async Task<IActionResult> DeletePayment(int id)
         {

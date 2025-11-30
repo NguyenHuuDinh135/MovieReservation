@@ -25,6 +25,8 @@ import {
 import { paths } from "@/config/paths"
 import { Link } from "react-router"
 import { cn } from "@/lib/utils"
+import { clearAllAuthData } from "@/lib/auth"
+import { authApi } from "@/lib/api-client"
 
 interface NavUserProps 
   extends React.ComponentPropsWithRef<typeof DropdownMenuTrigger>,
@@ -116,11 +118,18 @@ export function NavUser({
 
         <DropdownMenuItem 
           className="text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-950/20" 
-          onClick={() => {
-          localStorage.removeItem("token")
-          localStorage.removeItem("user")
-          navigate(paths.auth.login.path)
-        }}
+          onClick={async () => {
+            try {
+              // Gọi API logout để xóa refresh token ở server
+              await authApi.logout()
+            } catch (error) {
+              // Bỏ qua lỗi nếu API không thành công (có thể đã mất kết nối)
+              console.error("Logout API error:", error)
+            }
+            // Xóa toàn bộ dữ liệu xác thực ở client
+            clearAllAuthData()
+            navigate(paths.auth.login.path)
+          }}
         >
           <LogOut className="mr-2 size-4" />
           Log out
@@ -130,4 +139,3 @@ export function NavUser({
   )
 }
   
-
