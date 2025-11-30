@@ -11,8 +11,7 @@ namespace MovieReservation.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize] // ensure authenticated; RequirePermission will enforce specific permission
-    [RequirePermission("Permission.ManagePermissions")]
+    [Authorize] // ensure authenticated
     public class PermissionsController : ControllerBase
     {
         private readonly RoleManager<IdentityRole> _roleManager;
@@ -30,6 +29,8 @@ namespace MovieReservation.Server.Controllers
         }
 
         // GET api/permissions/me
+        // Endpoint này không yêu cầu ManagePermissions vì user cần lấy permissions của chính mình
+        // Chỉ cần authenticated (từ [Authorize] ở controller level)
         [HttpGet("me")]
         public IActionResult GetMyPermissions()
         {
@@ -39,6 +40,7 @@ namespace MovieReservation.Server.Controllers
 
         // Role endpoints
         // GET api/permissions/roles/{roleId}
+        [RequirePermission("Permission.ManagePermissions")]
         [HttpGet("roles/{roleId}")]
         public async Task<IActionResult> GetRolePermissions(string roleId)
         {
@@ -50,6 +52,7 @@ namespace MovieReservation.Server.Controllers
         }
 
         // POST api/permissions/roles/{roleId}
+        [RequirePermission("Permission.ManagePermissions")]
         [HttpPost("roles/{roleId}")]
         public async Task<IActionResult> AddPermissionToRole(string roleId, [FromBody] PermissionDto dto)
         {
@@ -64,6 +67,7 @@ namespace MovieReservation.Server.Controllers
         }
 
         // DELETE api/permissions/roles/{roleId}
+        [RequirePermission("Permission.ManagePermissions")]
         [HttpDelete("roles/{roleId}")]
         public async Task<IActionResult> RemovePermissionFromRole(string roleId, [FromBody] PermissionDto dto)
         {
@@ -78,6 +82,7 @@ namespace MovieReservation.Server.Controllers
 
         // User endpoints
         // GET api/permissions/users/{userId}
+        [RequirePermission("Permission.ManagePermissions")]
         [HttpGet("users/{userId}")]
         public async Task<IActionResult> GetUserPermissions(string userId)
         {
@@ -89,6 +94,7 @@ namespace MovieReservation.Server.Controllers
         }
 
         // POST api/permissions/users/{userId}
+        [RequirePermission("Permission.ManagePermissions")]
         [HttpPost("users/{userId}")]
         public async Task<IActionResult> AddPermissionToUser(string userId, [FromBody] PermissionDto dto)
         {
@@ -103,6 +109,7 @@ namespace MovieReservation.Server.Controllers
         }
 
         // DELETE api/permissions/users/{userId}
+        [RequirePermission("Permission.ManagePermissions")]
         [HttpDelete("users/{userId}")]
         public async Task<IActionResult> RemovePermissionFromUser(string userId, [FromBody] PermissionDto dto)
         {

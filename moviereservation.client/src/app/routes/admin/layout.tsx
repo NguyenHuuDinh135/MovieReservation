@@ -1,12 +1,141 @@
+import * as React from "react"
 import { AppSidebar } from "@/components/admin-app-sidebar"
 import { SiteHeader } from "@/components/admin-site-header"
 import {
   SidebarInset,
   SidebarProvider,
 } from "@/components/ui/sidebar"
-import { Outlet } from "react-router-dom"
+import { Navigate, Outlet, useLocation } from "react-router-dom"
+import { getAccessToken } from "@/lib/auth"
+import { paths } from "@/config/paths"
+import { useMyPermissions } from "@/hooks/use-permissions"
+import { toast } from "sonner"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import { AlertCircle } from "lucide-react"
+
+// Danh sách permissions được coi là "admin permissions"
+// User cần có ít nhất một trong các permissions này để truy cập admin
+const ADMIN_PERMISSIONS = [
+  "Permission.ManagePermissions",
+  "Permission.Movies.Create",
+  "Permission.Movies.Edit",
+  "Permission.Movies.Delete",
+  "Permission.Shows.Create",
+  "Permission.Shows.Edit",
+  "Permission.Shows.Delete",
+  "Permission.Theaters.Create",
+  "Permission.Theaters.Edit",
+  "Permission.Theaters.Delete",
+  "Permission.Bookings.Create",
+  "Permission.Bookings.Edit",
+  "Permission.Bookings.Delete",
+  "Permission.Genres.Create",
+  "Permission.Genres.Edit",
+  "Permission.Genres.Delete",
+  "Permission.Users.Create",
+  "Permission.Users.Edit",
+  "Permission.Users.Delete",
+  "Permission.Payments.Create",
+  "Permission.Payments.Edit",
+  "Permission.Payments.Delete",
+]
 
 export default function AdminLayout() {
+  const location = useLocation()
+  const token = getAccessToken() ?? undefined
+  const { data: permissions, isLoading, isError } = useMyPermissions(token)
+
+  // Tính toán hasAdminPermission ngay sau khi có dữ liệu permissions
+  const hasAdminPermission = permissions?.some((p) =>
+    ADMIN_PERMISSIONS.includes(p)
+  )
+
+  // ❗ Tất cả hooks phải được gọi TRƯỚC các early returns
+  React.useEffect(() => {
+    // Chỉ chạy khi đã có token và đã load xong permissions
+    if (token && !isLoading && hasAdminPermission === false) {
+      toast.error("Không có quyền truy cập", {
+        description:
+          "Bạn không có quyền truy cập vào trang quản trị. Vui lòng liên hệ quản trị viên.",
+      })
+      const timer = setTimeout(() => {
+        window.location.href = paths.auth.login.path
+      }, 2000)
+      return () => clearTimeout(timer)
+    }
+  }, [token, isLoading, hasAdminPermission])
+
+  // Các return sớm (early return) SAU KHI tất cả hooks đã được gọi
+  if (!token) {
+    return (
+      <Navigate
+        to={paths.auth.login.path}
+        replace
+        state={{ from: location }}
+      />
+    )
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="text-center">
+          <div className="mb-4 inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent"></div>
+          <p className="text-sm text-muted-foreground">
+            Đang kiểm tra quyền truy cập...
+          </p>
+        </div>
+      </div>
+    )
+  }
+
+  if (isError) {
+    return (
+      <div className="flex h-screen items-center justify-center p-4">
+        <Card className="max-w-md border-destructive">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-destructive">
+              <AlertCircle className="h-5 w-5" />
+              Lỗi
+            </CardTitle>
+            <CardDescription>
+              Không thể kiểm tra quyền truy cập. Vui lòng thử lại sau.
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      </div>
+    )
+  }
+
+  if (!hasAdminPermission) {
+    return (
+      <div className="flex h-screen items-center justify-center p-4">
+        <Card className="max-w-md border-destructive">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-destructive">
+              <AlertCircle className="h-5 w-5" />
+              Không có quyền truy cập
+            </CardTitle>
+            <CardDescription>
+              Bạn không có quyền truy cập vào trang quản trị. Vui lòng liên hệ quản trị viên để được cấp quyền.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground">
+              Đang chuyển hướng về trang chủ...
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
   return (
     <SidebarProvider
       style={
@@ -30,4 +159,3 @@ export default function AdminLayout() {
     </SidebarProvider>
   )
 }
-

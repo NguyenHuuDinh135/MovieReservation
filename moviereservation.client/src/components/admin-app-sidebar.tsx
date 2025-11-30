@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/sidebar"
 
 const data = {
+  // Default user data
   user: {
     name: "Admin",
     email: "admin@moviereservation.com",
@@ -91,6 +92,23 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const location = useLocation()
+  const [user, setUser] = React.useState(data.user)
+
+  React.useEffect(() => {
+    try {
+      const stored = localStorage.getItem("user")
+      if (stored) {
+        const parsed = JSON.parse(stored) as Partial<typeof data.user>
+        setUser({
+          name: parsed.name || data.user.name,
+          email: parsed.email || data.user.email,
+          avatar: parsed.avatar || data.user.avatar,
+        })
+      }
+    } catch (error) {
+      console.error("Failed to load user from localStorage", error)
+    }
+  }, [])
 
   return (
     <Sidebar collapsible="offcanvas" {...props}>
@@ -114,7 +132,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={user} />
       </SidebarFooter>
     </Sidebar>
   )

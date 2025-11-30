@@ -22,7 +22,7 @@ import {
 import { toast } from "sonner"
 import { Icons } from "./icons"
 import { paths } from "@/config/paths"
-import apiClient from "@/lib/api-client"
+import { setAccessToken } from "@/lib/auth"
 
 type FormData = z.infer<typeof otpSchema>
 
@@ -52,40 +52,66 @@ export function OtpForm({
     setIsLoading(true)
 
     try {
-      const res = await apiClient.auth.verifyOtp({
-        email: location.state?.email,
-        otpCode: data.otp,
+      const response = await fetch("/api/auth/verify-otp", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: location.state?.email,
+          otpCode: data.otp,
+        }),
       })
 
-      const result = res.data // { message, succeeded, data }
+      if (!response.ok) {
+        const errorData = await response.json()
+        toast("Invalid OTP", {
+          description: errorData.errors?.[0] || "Please check your OTP and try again.",
+        })
+        setIsLoading(false)
+        return
+      }
 
+      const result = await response.json()
       if (result.succeeded) {
-        // api-client.verifyOtp already sets access token if returned
-        if (result.data?.accessToken || result.data?.AccessToken) {
-          toast("Login successful", { description: "You have been logged in." })
-        } else {
+        if (result.data?.accessToken) {
+          // Sử dụng setAccessToken từ auth.ts để đảm bảo key nhất quán
+          setAccessToken(result.data.accessToken)
+          // Lưu thêm thông tin user vào localStorage
+          localStorage.setItem("user", JSON.stringify({
+            name: result.data.username,
+            email: result.data.email,
+            avatar: "https://github.com/shadcn.png"
+          }));
           toast("Login successful", {
-            description: "Verification succeeded. Token may be stored in cookie.",
+            description: "You have been logged in.",
+          })
+
+          const from = location.state?.from?.pathname || paths.home.path
+          navigate(from, { 
+            state: {
+              username: result.data.username,
+              email: result.data.email,
+              from: location.state?.from,
+            },
+          })
+        } else {
+          console.warn("No access token in response, but verification succeeded")
+
+          toast("Login successful", {
+            description: "You have been logged in (refresh token set in cookie).",
           })
         }
-
-        const from = location.state?.from?.pathname || paths.home.path
-        navigate(from, {
-          state: {
-            username: result.data?.username,
-            email: result.data?.email,
-            from: location.state?.from,
-          },
-        })
       } else {
         toast("Verification failed", {
-          description: result.error || result.message || "Please try again.",
+          description: result.errors?.[0] || "Please try again.",
         })
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error verifying OTP:", error)
-      const msg = error?.response?.data?.message || error?.message || "Network error"
-      toast("OTP verification failed", { description: String(msg) })
+      toast("Network error", {
+        description: "Please check your connection and try again.",
+      })
     } finally {
       setIsLoading(false)
     }
@@ -96,7 +122,9 @@ export function OtpForm({
       <Card>
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Enter OTP Code</CardTitle>
-          <CardDescription>Please enter the 6-digit code sent to your email.</CardDescription>
+          <CardDescription>
+            Please enter the 6-digit code sent to your email.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -122,9 +150,17 @@ export function OtpForm({
                 </InputOTP>
               </div>
 
-              {errors.otp && <p className="px-1 text-center text-xs text-red-600">{errors.otp.message}</p>}
+              {errors.otp && (
+                <p className="px-1 text-center text-xs text-red-600">
+                  {errors.otp.message}
+                </p>
+              )}
 
-              <Button type="submit" className="w-full" disabled={isLoading || otpValue?.length !== 6}>
+              <Button 
+                type="submit" 
+                className="w-full" 
+                disabled={isLoading || otpValue?.length !== 6}
+              >
                 {isLoading && <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />}
                 Confirm
               </Button>

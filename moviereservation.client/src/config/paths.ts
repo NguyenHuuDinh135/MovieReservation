@@ -6,19 +6,19 @@ export const paths = {
 
   auth: {
     register: {
-      path: '/register',
+      path: '/auth/register',
       getHref: (redirectTo?: string | null | undefined) =>
-        `/register${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`,
+        `/auth/register${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`,
     },
     login: {
-      path: '/login',
+      path: '/auth/login',
       getHref: (redirectTo?: string | null | undefined) =>
-        `/login${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`,
+        `/auth/login${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`,
     },
     otp: {
-      path: '/verify-otp',
+      path: '/auth/verify-otp',
       getHref: (redirectTo?: string | null | undefined) =>
-        `/verify-otp${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`,
+        `/auth/verify-otp${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`,
     }
   },
 

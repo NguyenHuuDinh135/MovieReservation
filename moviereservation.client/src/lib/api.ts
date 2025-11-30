@@ -1,5 +1,10 @@
-import axios, { AxiosError, type AxiosInstance, type AxiosRequestConfig } from 'axios'
+import axios, { AxiosError, type AxiosInstance, type AxiosRequestConfig, type InternalAxiosRequestConfig } from 'axios'
 import { getAccessToken, setAccessToken, clearAccessToken } from './auth'
+
+// Extend type to include _retry property
+interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
+  _retry?: boolean
+}
 
 type QueueItem = {
   resolve: (value?: unknown) => void
@@ -45,7 +50,7 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
-    const originalRequest = error.config
+    const originalRequest = error.config as CustomAxiosRequestConfig
 
     if (!originalRequest) {
       return Promise.reject(error)
@@ -53,7 +58,7 @@ api.interceptors.response.use(
 
     // Prevent infinite loop and handle only 401
     if ((error.response?.status === 401 || (error.response?.status === 400 && (error.response?.data as any)?.message?.toLowerCase?.()?.includes('token'))) && !originalRequest._retry) {
-      originalRequest._retry = true as any
+      originalRequest._retry = true
 
       if (isRefreshing) {
         // queue the request until refresh completes
