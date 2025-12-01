@@ -53,11 +53,13 @@ export function NavSecondary({
         <Collapsible key={item.title} defaultOpen={isOpen} className="group/collapsible">
           <SidebarMenuItem>
             <CollapsibleTrigger asChild>
-              <SidebarMenuButton tooltip={item.title} isActive={isActive || hasActiveChild}>
-                {item.icon && <item.icon />}
-                <span>{item.title}</span>
-                <IconChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-              </SidebarMenuButton>
+              <Link to={item.url || "#"}>
+                <SidebarMenuButton tooltip={item.title} isActive={isActive || hasActiveChild}>
+                    {item.icon && <item.icon />}
+                  <span>{item.title}</span>
+                  <IconChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                </SidebarMenuButton>
+              </Link>
             </CollapsibleTrigger>
             <CollapsibleContent className="overflow-hidden transition-all data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
               <SidebarMenuSub>
