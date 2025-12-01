@@ -6,6 +6,7 @@ using MovieReservation.Server.Application.Permissions.Commands.RemovePermissionF
 using MovieReservation.Server.Application.Permissions.Commands.RemovePermissionFromUser;
 using MovieReservation.Server.Application.Permissions.Queries.GetAllPermissions;
 using MovieReservation.Server.Application.Permissions.Queries.GetAllRoles;
+using MovieReservation.Server.Application.Permissions.Queries.GetAssignablePermissions;
 using MovieReservation.Server.Application.Permissions.Queries.GetMyPermissions;
 using MovieReservation.Server.Application.Permissions.Queries.GetRolePermissions;
 using MovieReservation.Server.Application.Permissions.Queries.GetUserPermissions;
@@ -44,6 +45,15 @@ namespace MovieReservation.Server.Controllers
             return Ok(result);
         }
 
+        // GET api/permissions/assignable - Lấy các permissions mà admin hiện tại có thể cấp (từ roles của admin)
+        [RequirePermission("Permission.ManagePermissions")]
+        [HttpGet("assignable")]
+        public async Task<ActionResult<string[]>> GetAssignablePermissions()
+        {
+            var result = await Sender.Send(new GetAssignablePermissionsQuery(User));
+            return Ok(result);
+        }
+
         // Role endpoints
         // GET api/permissions/roles/all - Lấy tất cả roles
         [RequirePermission("Permission.ManagePermissions")]
@@ -55,7 +65,7 @@ namespace MovieReservation.Server.Controllers
         }
 
         // GET api/permissions/roles/{roleId} - Lấy permissions của một role
-        [RequirePermission("Permission.ManagePermissions")]
+        // [RequirePermission("Permission.ManagePermissions")]
         [HttpGet("roles/{roleId}")]
         public async Task<ActionResult<string[]>> GetRolePermissions(string roleId)
         {
@@ -107,7 +117,8 @@ namespace MovieReservation.Server.Controllers
             await Sender.Send(new AddPermissionToUserCommand
             {
                 UserId = userId,
-                Permission = dto.Permission
+                Permission = dto.Permission,
+                CurrentUser = User
             });
             return Ok();
         }
@@ -120,7 +131,8 @@ namespace MovieReservation.Server.Controllers
             await Sender.Send(new RemovePermissionFromUserCommand
             {
                 UserId = userId,
-                Permission = dto.Permission
+                Permission = dto.Permission,
+                CurrentUser = User
             });
             return NoContent();
         }

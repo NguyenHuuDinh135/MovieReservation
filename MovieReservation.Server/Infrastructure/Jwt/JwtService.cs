@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using MovieReservation.Server.Application.Common.Interfaces;
@@ -53,33 +53,19 @@ namespace MovieReservation.Server.Infrastructure.Services
                 }
             }
 
-            // Collect permission claims from user-level claims (AspNetUserClaims)
+            // CHỈ lấy permission claims từ user-level claims (AspNetUserClaims)
+            // KHÔNG lấy từ role claims nữa - user phải có quyền được cấp trực tiếp
             var userClaims = _userManager.GetClaimsAsync(user).GetAwaiter().GetResult()
                 ?? Enumerable.Empty<Claim>();
-            var permissionSet = new HashSet<string>(userClaims
+            var permissions = userClaims
                 .Where(c => string.Equals(c.Type, PermissionConstants.Permission, StringComparison.Ordinal))
-                .Select(c => c.Value));
+                .Select(c => c.Value)
+                .Distinct(StringComparer.Ordinal);
 
-            // Collect permission claims from roles (AspNetRoleClaims via RoleManager)
-            if (roles != null)
+            // Add permission claims vào token (chỉ từ UserClaims)
+            foreach (var permission in permissions)
             {
-                foreach (var roleName in roles.Distinct())
-                {
-                    var role = _roleManager.FindByNameAsync(roleName).GetAwaiter().GetResult();
-                    if (role == null) continue;
-                    var roleClaims = _roleManager.GetClaimsAsync(role).GetAwaiter().GetResult()
-                        ?? Enumerable.Empty<Claim>();
-                    foreach (var rc in roleClaims.Where(c => string.Equals(c.Type, PermissionConstants.Permission, StringComparison.Ordinal)))
-                    {
-                        permissionSet.Add(rc.Value);
-                    }
-                }
-            }
-
-            // Add permission claims (deduplicated)
-            foreach (var p in permissionSet)
-            {
-                tokenClaims.Add(new Claim(PermissionConstants.Permission, p));
+                tokenClaims.Add(new Claim(PermissionConstants.Permission, permission));
             }
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Secret"]));

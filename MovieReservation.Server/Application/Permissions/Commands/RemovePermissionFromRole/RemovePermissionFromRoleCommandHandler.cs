@@ -30,16 +30,16 @@ namespace MovieReservation.Server.Application.Permissions.Commands.RemovePermiss
             if (string.IsNullOrWhiteSpace(request.Permission))
                 throw new Exception("Permission is required.");
 
+            var role = await _roleManager.FindByIdAsync(request.RoleId);
+            if (role == null)
+                throw new NotFoundException($"Role with ID {request.RoleId} not found.");
+
             // Validate permission tồn tại trong PermissionConstants
             var allPermissions = PermissionConstants.Permissions.GetAll();
             if (!allPermissions.Contains(request.Permission, StringComparer.Ordinal))
             {
                 throw new NotFoundException($"Permission '{request.Permission}' không tồn tại trong PermissionConstants.");
             }
-
-            var role = await _roleManager.FindByIdAsync(request.RoleId);
-            if (role == null)
-                throw new NotFoundException($"Role with ID {request.RoleId} not found.");
 
             // Xóa RoleClaim
             var claim = new Claim(PermissionConstants.Permission, request.Permission);

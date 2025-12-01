@@ -128,7 +128,7 @@ namespace MovieReservation.Server.Infrastructure
                 }
             }
 
-            // --- Seed permissions into AspNetRoleClaims and AspNetUserClaims ---
+            // --- Seed permissions into AspNetRoleClaims ---
             // Lấy tất cả permissions từ PermissionConstants
             var allPermissions = PermissionConstants.Permissions.GetAll();
 
@@ -169,16 +169,43 @@ namespace MovieReservation.Server.Infrastructure
                 }
             }
 
-            // Gán permission trực tiếp cho một user cụ thể (ví dụ: user2)
-            // Đây là ví dụ về cách gán permission trực tiếp cho user (không thông qua role)
-            var sampleUser = await _userManager.FindByIdAsync(user2Id);
-            if (sampleUser != null)
+            // --- Copy permissions từ Role vào UserClaims cho TẤT CẢ users trong database ---
+            // Đồng bộ permissions: Copy tất cả permissions từ role của user vào UserClaims
+            // Logic này đảm bảo mỗi user có permissions được cấp trực tiếp trong UserClaims dựa trên role của họ
+            var allUsers = _userManager.Users.ToList();
+            foreach (var identityUser in allUsers)
             {
-                var userClaims = await _userManager.GetClaimsAsync(sampleUser);
-                var directPermission = PermissionConstants.Permissions.PaymentsView;
-                if (!userClaims.Any(c => c.Type == PermissionConstants.Permission && c.Value == directPermission))
+                // Lấy tất cả roles của user
+                var userRoles = await _userManager.GetRolesAsync(identityUser);
+                if (!userRoles.Any()) continue;
+
+                // Lấy permissions hiện tại của user
+                var existingUserClaims = await _userManager.GetClaimsAsync(identityUser);
+                var existingPermissions = existingUserClaims
+                    .Where(c => c.Type == PermissionConstants.Permission)
+                    .Select(c => c.Value)
+                    .ToHashSet(StringComparer.Ordinal);
+
+                // Lặp qua từng role của user và copy permissions từ role vào UserClaims
+                foreach (var roleName in userRoles)
                 {
-                    await _userManager.AddClaimAsync(sampleUser, new Claim(PermissionConstants.Permission, directPermission));
+                    var role = await _roleManager.FindByNameAsync(roleName);
+                    if (role == null) continue;
+
+                    var roleClaims = await _roleManager.GetClaimsAsync(role);
+                    var rolePermissions = roleClaims
+                        .Where(c => c.Type == PermissionConstants.Permission)
+                        .Select(c => c.Value);
+
+                    // Copy mỗi permission từ role vào UserClaims nếu chưa có
+                    foreach (var permission in rolePermissions)
+                    {
+                        if (!existingPermissions.Contains(permission))
+                        {
+                            await _userManager.AddClaimAsync(identityUser, new Claim(PermissionConstants.Permission, permission));
+                            existingPermissions.Add(permission);
+                        }
+                    }
                 }
             }
             // --- end permissions seeding ---

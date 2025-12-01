@@ -13,11 +13,15 @@ namespace MovieReservation.Server.Application.Permissions.Commands.AddPermission
 
     public class AddPermissionToRoleCommandHandler : IRequestHandler<AddPermissionToRoleCommand>
     {
+        private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
 
-        public AddPermissionToRoleCommandHandler(RoleManager<IdentityRole> roleManager)
+        public AddPermissionToRoleCommandHandler(
+            RoleManager<IdentityRole> roleManager,
+            UserManager<User> userManager)
         {
             _roleManager = roleManager;
+            _userManager = userManager;
         }
 
         public async Task Handle(AddPermissionToRoleCommand request, CancellationToken cancellationToken)
@@ -47,6 +51,21 @@ namespace MovieReservation.Server.Application.Permissions.Commands.AddPermission
             var result = await _roleManager.AddClaimAsync(role, new Claim(PermissionConstants.Permission, request.Permission));
             if (!result.Succeeded)
                 throw new Exception($"Failed to add permission: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+            
+            // Tự động thêm UserClaims tương ứng cho tất cả users thuộc role này
+            var usersInRole = await _userManager.GetUsersInRoleAsync(role.Name ?? string.Empty);
+            foreach (var user in usersInRole)
+            {
+                var userClaims = await _userManager.GetClaimsAsync(user);
+                var matchingClaim = userClaims.FirstOrDefault(c =>
+                    c.Type == PermissionConstants.Permission &&
+                    c.Value == request.Permission);
+
+                if (matchingClaim == null)
+                {
+                    await _userManager.AddClaimAsync(user, new Claim(PermissionConstants.Permission, request.Permission));
+                }
+            }
         }
     }
 }

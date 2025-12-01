@@ -31,6 +31,11 @@ namespace MovieReservation.Server.Web.Middleware
                 context.Response.StatusCode = StatusCodes.Status409Conflict;
                 await context.Response.WriteAsJsonAsync(new { message = ex.Message });
             }
+            catch (ForbiddenAccessException ex)
+            {
+                context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                await context.Response.WriteAsJsonAsync(new { message = ex.Message });
+            }
             catch (Exception ex)
             {
                 context.Response.StatusCode = StatusCodes.Status500InternalServerError;

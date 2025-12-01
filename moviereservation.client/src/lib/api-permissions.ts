@@ -44,6 +44,7 @@ getMyPermissions: () => api.get<PermissionKey[]>("/permissions/me"),
 
 // permissions
 getAllPermissions: () => api.get<PermissionKey[]>("/permissions/all"),
+getAssignablePermissions: () => api.get<PermissionKey[]>("/permissions/assignable"),
 
 // roles
 getAllRoles: () => api.get<RoleDto[]>("/permissions/roles/all"),
