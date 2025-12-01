@@ -24,14 +24,6 @@ import { permissionsApi, type PermissionKey } from "@/lib/api-permissions"
 import { useQuery, useMutation } from "@tanstack/react-query"
 import { useAllPermissions, useAllRoles } from "@/hooks/use-permissions-data"
 import { toast } from "sonner"
-import {
-  Breadcrumb,
-  BreadcrumbList,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
 
 export default function UserGroupPermissionsPage() {
   const { roleId } = useParams<{ roleId: string }>()
@@ -134,33 +126,6 @@ export default function UserGroupPermissionsPage() {
 
   return (
     <div className="flex flex-col h-full bg-background">
-      {/* Breadcrumb */}
-      <div className="border-b bg-background px-8 py-4">
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link to="/admin/settings">Cài Đặt</Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link to="/admin/settings/user-groups">Nhóm Người Dùng</Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>{currentRole.name}</BreadcrumbPage>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>Permissions</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-      </div>
-
       {/* Header */}
       <div className="border-b bg-background">
         <div className="px-8 py-6">

@@ -3,21 +3,17 @@ import { useMemo } from 'react';
 import { createBrowserRouter } from 'react-router';
 import { RouterProvider } from 'react-router/dom';
 
-import {
-  default as AppRoot,
-  ErrorBoundary as AppRootErrorBoundary
-} from './routes/app/layout';
-  
 import { paths } from '@/config/paths';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const convert = (queryClient: QueryClient) => (m: any) => {
-  const { clientLoader, clientAction, default: Component, ...rest } = m;
+  const { clientLoader, clientAction, default: Component, ErrorBoundary, ...rest } = m;
   return {
     ...rest,
     loader: clientLoader?.(queryClient),
     action: clientAction?.(queryClient),
     Component,
+    ErrorBoundary,
   };
 };
 // eslint-disable-next-line react-refresh/only-export-components
@@ -109,14 +105,17 @@ export const createAppRouter = (queryClient: QueryClient) =>
     },
     {
       path: paths.home.path,
-      element: <AppRoot children />,
-      ErrorBoundary: AppRootErrorBoundary,
+      lazy: () => import('./routes/app/layout').then(convert(queryClient)),
       children: [
         {
           index: true,
           lazy: () => import('./routes/app/root/page').then(convert(queryClient)),
         }
       ]
+    },
+    {
+      path: '*',
+      lazy: () => import('./routes/errors/404/page').then(convert(queryClient)),
     }
   ]);
 export const AppRouter = () => {

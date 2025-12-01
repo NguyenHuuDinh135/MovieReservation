@@ -11,9 +11,12 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { LayoutProvider } from "@/hooks/use-layout";
 import { ActiveThemeProvider } from "@/components/active-theme";
 import { TailwindIndicator } from "@/components/tailwind-indicator";
+import { GenericError } from "@/components/errors/generic";
+
 type AppProviderProps = {
   children: React.ReactNode;
 };
+
 export const AppProvider = ({ children }: AppProviderProps) =>{
   const [queryClient] = React.useState(
     () =>
@@ -30,11 +33,12 @@ export const AppProvider = ({ children }: AppProviderProps) =>{
         }>
           <ErrorBoundary
             FallbackComponent={({ error, resetErrorBoundary }) => (
-              <div role="alert" className="p-4">
-                <p>Something went wrong:</p>
-                <pre>{error.message}</pre>
-                <button onClick={resetErrorBoundary}>Try again</button>
-              </div>
+              <GenericError
+                error={error}
+                resetErrorBoundary={resetErrorBoundary}
+                title="Lỗi ứng dụng"
+                description="Đã xảy ra lỗi trong ứng dụng. Vui lòng thử lại."
+              />
             )}
           >
             <QueryClientProvider client={queryClient}>

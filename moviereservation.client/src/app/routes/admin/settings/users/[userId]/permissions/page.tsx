@@ -22,17 +22,9 @@ import { AdminDataState } from "@/components/admin-data-state"
 import { useQueryClient } from "@tanstack/react-query"
 import { permissionsApi, type PermissionKey } from "@/lib/api-permissions"
 import { useQuery, useMutation } from "@tanstack/react-query"
-import { useAllPermissions } from "@/hooks/use-permissions-data"
+import { useAssignablePermissions } from "@/hooks/use-permissions-data"
 import { useAdminUsers } from "@/hooks/use-admin-data"
 import { toast } from "sonner"
-import {
-  Breadcrumb,
-  BreadcrumbList,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
 
 export default function UserPermissionsPage() {
   const { userId } = useParams<{ userId: string }>()
@@ -43,11 +35,11 @@ export default function UserPermissionsPage() {
   const { data: users = [] } = useAdminUsers()
   const currentUser = users.find((u) => u.id === userId)
 
-  // Lấy tất cả permissions từ PermissionConstants để hiển thị
+  // Lấy các permissions mà admin có thể cấp (từ roles của admin)
   const {
-    data: allPermissions = [],
+    data: assignablePermissions = [],
     isLoading: isLoadingPermissions,
-  } = useAllPermissions()
+  } = useAssignablePermissions()
 
   // Lấy UserClaims (permissions) của user từ AspNetUserClaims
   const {
@@ -93,12 +85,12 @@ export default function UserPermissionsPage() {
 
   // Filter permissions based on search query
   const filteredPermissions = React.useMemo(() => {
-    if (!permissionSearch.trim()) return allPermissions
+    if (!permissionSearch.trim()) return assignablePermissions
     const query = permissionSearch.toLowerCase()
-    return allPermissions.filter((permission) =>
+    return assignablePermissions.filter((permission) =>
       permission.toLowerCase().includes(query)
     )
-  }, [allPermissions, permissionSearch])
+  }, [assignablePermissions, permissionSearch])
 
   const handleTogglePermission = (permission: PermissionKey) => {
     if (!userId) return
@@ -113,6 +105,7 @@ export default function UserPermissionsPage() {
 
   const handleRefresh = () => {
     queryClient.invalidateQueries({ queryKey: ["permissions", "users"] })
+    queryClient.invalidateQueries({ queryKey: ["permissions", "assignable"] })
     queryClient.invalidateQueries({ queryKey: ["admin", "users"] })
     refetchUserPermissions()
   }
@@ -134,33 +127,6 @@ export default function UserPermissionsPage() {
 
   return (
     <div className="flex flex-col h-full bg-background">
-      {/* Breadcrumb */}
-      <div className="border-b bg-background px-8 py-4">
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link to="/admin/settings">Cài Đặt</Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link to="/admin/settings/users">Người Dùng</Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>{currentUser.userName}</BreadcrumbPage>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>Permissions</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-      </div>
-
       {/* Header */}
       <div className="border-b bg-background">
         <div className="px-8 py-6">
@@ -169,7 +135,7 @@ export default function UserPermissionsPage() {
             <IconInfoCircle className="h-4 w-4 text-muted-foreground" />
           </div>
           <p className="text-sm text-muted-foreground">
-            Các PermissionConstants được cấp động cho user {currentUser.userName} (từ AspNetUserClaims).
+            Các PermissionConstants được cấp động cho user {currentUser.userName} (từ AspNetUserClaims). Chỉ hiển thị các quyền mà bạn có thể cấp (từ roles của bạn).
           </p>
         </div>
       </div>
@@ -196,9 +162,9 @@ export default function UserPermissionsPage() {
       <div className="flex-1 overflow-auto p-8">
         <Card>
           <CardHeader>
-            <CardTitle>Danh Sách Permissions</CardTitle>
+            <CardTitle>Danh Sách Permissions Có Thể Cấp</CardTitle>
             <CardDescription>
-              Tất cả các permissions từ PermissionConstants. Đánh dấu để thêm/xóa quyền cho user này.
+              Chỉ hiển thị các permissions mà bạn có thể cấp (từ roles của bạn). Đánh dấu để thêm/xóa quyền cho user này.
             </CardDescription>
           </CardHeader>
           <CardContent className="p-0">

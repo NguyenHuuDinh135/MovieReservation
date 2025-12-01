@@ -5,7 +5,7 @@ import {
   SidebarInset,
   SidebarProvider,
 } from "@/components/ui/sidebar"
-import { Navigate, Outlet, useLocation } from "react-router-dom"
+import { Navigate, Outlet, useLocation, useRouteError, isRouteErrorResponse, useNavigate } from "react-router-dom"
 import { getAccessToken } from "@/lib/auth"
 import { paths } from "@/config/paths"
 import { useMyPermissions } from "@/hooks/use-permissions"
@@ -19,6 +19,46 @@ import {
 } from "@/components/ui/card"
 import { AlertCircle } from "lucide-react"
 import { ADMIN_PERMISSIONS } from "@/lib/api-permissions"
+import { ServerError } from "@/components/errors/500"
+import { NotFoundError } from "@/components/errors/404"
+import { GenericError } from "@/components/errors/generic"
+
+export function ErrorBoundary() {
+  const error = useRouteError()
+  const navigate = useNavigate()
+
+  const handleReset = () => {
+    navigate(0) // Reload current page
+  }
+
+  if (isRouteErrorResponse(error)) {
+    if (error.status === 404) {
+      return <NotFoundError />
+    }
+    if (error.status === 500) {
+      return <ServerError error={error.data as Error} resetErrorBoundary={handleReset} />
+    }
+    return (
+      <GenericError
+        error={error.data as Error}
+        resetErrorBoundary={handleReset}
+        title={`${error.status} - Lỗi`}
+        description={error.statusText || 'Đã xảy ra lỗi không mong muốn'}
+      />
+    )
+  }
+
+  const errorMessage =
+    error instanceof Error ? error.message : 'Đã xảy ra lỗi không mong muốn'
+  return (
+    <GenericError
+      error={error instanceof Error ? error : undefined}
+      resetErrorBoundary={handleReset}
+      title="Lỗi quản trị"
+      description={errorMessage}
+    />
+  )
+}
 
 export default function AdminLayout() {
   const location = useLocation()
