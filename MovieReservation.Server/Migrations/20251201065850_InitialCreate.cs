@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace MovieReservation.Server.Data.Migrations
+namespace MovieReservation.Server.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration
@@ -87,7 +87,7 @@ namespace MovieReservation.Server.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Roles",
+                name: "Persons",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -98,7 +98,7 @@ namespace MovieReservation.Server.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Roles", x => x.Id);
+                    table.PrimaryKey("PK_Persons", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -248,26 +248,26 @@ namespace MovieReservation.Server.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "MovieRoles",
+                name: "MoviePersons",
                 columns: table => new
                 {
                     MovieId = table.Column<int>(type: "int", nullable: false),
-                    RoleId = table.Column<int>(type: "int", nullable: false),
+                    PersonId = table.Column<int>(type: "int", nullable: false),
                     RoleType = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_MovieRoles", x => new { x.MovieId, x.RoleId });
+                    table.PrimaryKey("PK_MoviePersons", x => new { x.MovieId, x.PersonId });
                     table.ForeignKey(
-                        name: "FK_MovieRoles_Movies_MovieId",
+                        name: "FK_MoviePersons_Movies_MovieId",
                         column: x => x.MovieId,
                         principalTable: "Movies",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_MovieRoles_Roles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "Roles",
+                        name: "FK_MoviePersons_Persons_PersonId",
+                        column: x => x.PersonId,
+                        principalTable: "Persons",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -438,9 +438,9 @@ namespace MovieReservation.Server.Data.Migrations
                 column: "GenreId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_MovieRoles_RoleId",
-                table: "MovieRoles",
-                column: "RoleId");
+                name: "IX_MoviePersons_PersonId",
+                table: "MoviePersons",
+                column: "PersonId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Payments_ShowId",
@@ -493,7 +493,7 @@ namespace MovieReservation.Server.Data.Migrations
                 name: "MovieGenres");
 
             migrationBuilder.DropTable(
-                name: "MovieRoles");
+                name: "MoviePersons");
 
             migrationBuilder.DropTable(
                 name: "Payments");
@@ -508,7 +508,7 @@ namespace MovieReservation.Server.Data.Migrations
                 name: "Genres");
 
             migrationBuilder.DropTable(
-                name: "Roles");
+                name: "Persons");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

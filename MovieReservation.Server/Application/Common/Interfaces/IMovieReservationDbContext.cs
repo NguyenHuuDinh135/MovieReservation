@@ -13,8 +13,8 @@ namespace MovieReservation.Server.Application.Common.Interfaces
         DbSet<Movie> Movies { get; set; }
         DbSet<Genre> Genres { get; set; }
         DbSet<MovieGenre> MovieGenres { get; set; }
-        DbSet<MovieRole> MovieRoles { get; set; }
-        DbSet<Role> Roles { get; set; }
+        DbSet<MoviePerson> MoviePersons { get; set; }
+        DbSet<Person> Persons { get; set; }
         DbSet<Theater> Theaters { get; set; }
         DbSet<TheaterSeat> TheaterSeats { get; set; }
         DbSet<Payment> Payments { get; set; }

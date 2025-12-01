@@ -4,16 +4,16 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 
-namespace MovieReservation.Server.Application.Movies.Queries.GetRolesForMovie
+namespace MovieReservation.Server.Application.Movies.Queries.GetPersonForMovie
 {
-    public class RolesForMovieDto
+    public class PersonsForMovieDto
     {
         public int Id { get; set; }
         public string Title { get; set; } = string.Empty;
-        public List<RoleDto> Roles { get; set; } = new();
+        public List<PersonDto> Persons { get; set; } = new();
     }
 
-    public class RoleDto
+    public class PersonDto
     {
         public int Id { get; set; }
         public string FullName { get; set; } = string.Empty;
@@ -25,10 +25,10 @@ namespace MovieReservation.Server.Application.Movies.Queries.GetRolesForMovie
     {
         public Mapping()
         {
-            CreateMap<Movie, RolesForMovieDto>()
-                .ForMember(dest => dest.Roles, ops => ops.MapFrom(src => src.MovieRoles.Select(mr => mr.Role)));
+            CreateMap<Movie, PersonsForMovieDto>()
+                .ForMember(dest => dest.Persons, ops => ops.MapFrom(src => src.MoviePersons.Select(mr => mr.Person)));
             
-            CreateMap<Role, RoleDto>();
+            CreateMap<Person, PersonDto>();
         }
     }
 }

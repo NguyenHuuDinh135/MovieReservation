@@ -10,6 +10,7 @@ namespace MovieReservation.Server.Application.Permissions.Commands.AddPermission
     {
         public string UserId { get; init; } = string.Empty;
         public string Permission { get; init; } = string.Empty;
+        public ClaimsPrincipal CurrentUser { get; init; } = null!;
     }
 
     public class AddPermissionToUserCommandHandler : IRequestHandler<AddPermissionToUserCommand>
@@ -31,6 +32,13 @@ namespace MovieReservation.Server.Application.Permissions.Commands.AddPermission
             if (!allPermissions.Contains(request.Permission, StringComparer.Ordinal))
             {
                 throw new NotFoundException($"Permission '{request.Permission}' không tồn tại trong PermissionConstants.");
+            }
+
+            // Validate admin chỉ có thể cấp các quyền mà họ có (từ roles và user claims)
+            var adminPermissions = request.CurrentUser.GetPermissions().ToList();
+            if (!adminPermissions.Contains(request.Permission, StringComparer.Ordinal))
+            {
+                throw new ForbiddenAccessException($"Bạn không có quyền cấp permission '{request.Permission}' này. Chỉ có thể cấp các quyền mà bạn đã được cấp.");
             }
 
             var user = await _userManager.FindByIdAsync(request.UserId);

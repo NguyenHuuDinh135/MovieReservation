@@ -7,7 +7,7 @@ using MovieReservation.Server.Application.Movies.Queries;
 using MovieReservation.Server.Application.Movies.Queries.GetFilteredMovies;
 using MovieReservation.Server.Application.Movies.Queries.GetMovieById;
 using MovieReservation.Server.Application.Movies.Queries.GetMovies;
-using MovieReservation.Server.Application.Movies.Queries.GetRolesForMovie;
+using MovieReservation.Server.Application.Movies.Queries.GetPersonForMovie;
 using MovieReservation.Server.Web.Controllers;
 using MovieReservation.Server.Infrastructure.Authorization;
 
@@ -46,10 +46,10 @@ namespace MovieReservation.Server.Controllers
         }
 
         [RequirePermission(PermissionConstants.Permissions.MoviesView)]
-        [HttpGet("id/{id:int}/roles")]
-        public async Task<ActionResult<RolesForMovieDto>> GetRolesById(int id)
+        [HttpGet("id/{id:int}/persons")]
+        public async Task<ActionResult<PersonsForMovieDto>> GetPersonsById(int id)
         {
-            var result = await Sender.Send(new GetRolesForMovieQuery { Id = id });
+            var result = await Sender.Send(new GetPersonForMovieQuery { Id = id });
 
             return Ok(result);
         }

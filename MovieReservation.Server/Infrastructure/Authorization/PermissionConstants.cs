@@ -56,6 +56,12 @@ namespace MovieReservation.Server.Infrastructure.Authorization
             public const string UsersDelete = "Permission.Users.Delete";
             public const string UsersView = "Permission.Users.View";
 
+            // Person
+            public const string PersonCreate = "Permission.Person.Create";
+            public const string PersonEdit = "Permission.Person.Edit";
+            public const string PersonDelete = "Permission.Person.Delete";
+            public const string PersonView = "Permission.Person.View";
+
             /// <summary>
             /// Get all permission values as an array (useful for seeding, validation, etc.)
             /// </summary>
@@ -71,6 +77,7 @@ namespace MovieReservation.Server.Infrastructure.Authorization
                     BookingsCreate, BookingsEdit, BookingsDelete, BookingsView,
                     GenresCreate, GenresEdit, GenresDelete, GenresView,
                     UsersCreate, UsersEdit, UsersDelete, UsersView,
+                    PersonCreate, PersonEdit, PersonDelete, PersonView,
                 };
             }
         }

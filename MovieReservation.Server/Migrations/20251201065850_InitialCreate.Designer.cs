@@ -3,17 +3,20 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MovieReservation.Server.Infrastructure;
 
 #nullable disable
 
-namespace MovieReservation.Server.Data.Migrations
+namespace MovieReservation.Server.Migrations
 {
     [DbContext(typeof(MovieReservationDbContext))]
-    partial class MovieReservationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251201065850_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -266,22 +269,22 @@ namespace MovieReservation.Server.Data.Migrations
                     b.ToTable("MovieGenres");
                 });
 
-            modelBuilder.Entity("MovieReservation.Server.Domain.Entities.MovieRole", b =>
+            modelBuilder.Entity("MovieReservation.Server.Domain.Entities.MoviePerson", b =>
                 {
                     b.Property<int>("MovieId")
                         .HasColumnType("int");
 
-                    b.Property<int>("RoleId")
+                    b.Property<int>("PersonId")
                         .HasColumnType("int");
 
                     b.Property<int>("RoleType")
                         .HasColumnType("int");
 
-                    b.HasKey("MovieId", "RoleId");
+                    b.HasKey("MovieId", "PersonId");
 
-                    b.HasIndex("RoleId");
+                    b.HasIndex("PersonId");
 
-                    b.ToTable("MovieRoles");
+                    b.ToTable("MoviePersons");
                 });
 
             modelBuilder.Entity("MovieReservation.Server.Domain.Entities.Payment", b =>
@@ -317,7 +320,7 @@ namespace MovieReservation.Server.Data.Migrations
                     b.ToTable("Payments");
                 });
 
-            modelBuilder.Entity("MovieReservation.Server.Domain.Entities.Role", b =>
+            modelBuilder.Entity("MovieReservation.Server.Domain.Entities.Person", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -338,7 +341,7 @@ namespace MovieReservation.Server.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles");
+                    b.ToTable("Persons");
                 });
 
             modelBuilder.Entity("MovieReservation.Server.Domain.Entities.Show", b =>
@@ -594,23 +597,23 @@ namespace MovieReservation.Server.Data.Migrations
                     b.Navigation("Movie");
                 });
 
-            modelBuilder.Entity("MovieReservation.Server.Domain.Entities.MovieRole", b =>
+            modelBuilder.Entity("MovieReservation.Server.Domain.Entities.MoviePerson", b =>
                 {
                     b.HasOne("MovieReservation.Server.Domain.Entities.Movie", "Movie")
-                        .WithMany("MovieRoles")
+                        .WithMany("MoviePersons")
                         .HasForeignKey("MovieId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MovieReservation.Server.Domain.Entities.Role", "Role")
-                        .WithMany("MovieRoles")
-                        .HasForeignKey("RoleId")
+                    b.HasOne("MovieReservation.Server.Domain.Entities.Person", "Person")
+                        .WithMany("MoviePersons")
+                        .HasForeignKey("PersonId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Movie");
 
-                    b.Navigation("Role");
+                    b.Navigation("Person");
                 });
 
             modelBuilder.Entity("MovieReservation.Server.Domain.Entities.Payment", b =>
@@ -671,14 +674,14 @@ namespace MovieReservation.Server.Data.Migrations
                 {
                     b.Navigation("MovieGenres");
 
-                    b.Navigation("MovieRoles");
+                    b.Navigation("MoviePersons");
 
                     b.Navigation("Shows");
                 });
 
-            modelBuilder.Entity("MovieReservation.Server.Domain.Entities.Role", b =>
+            modelBuilder.Entity("MovieReservation.Server.Domain.Entities.Person", b =>
                 {
-                    b.Navigation("MovieRoles");
+                    b.Navigation("MoviePersons");
                 });
 
             modelBuilder.Entity("MovieReservation.Server.Domain.Entities.Show", b =>

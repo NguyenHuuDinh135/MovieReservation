@@ -273,52 +273,52 @@ namespace MovieReservation.Server.Infrastructure
                 await _context.SaveChangesAsync();
             }
 
-            // Seed Roles
-            if (!_context.Roles.Any())
+            // Seed Persons
+            if (!_context.Persons.Any())
             {
-                _context.Roles.AddRange(
-                    new Role { FullName = "Robert Pattinson", Age = 35, PictureUrl = "https://i.pinimg.com/564x/8d/e3/89/8de389c84e919d3577f47118e2627d95.jpg" },
-                    new Role { FullName = "Zoë Kravitz", Age = 32, PictureUrl = "https://www.simplyceleb.com/wp-content/uploads/2020/06/Zoe-Kravitz-Filmleri.jpg" },
-                    new Role { FullName = "Paul Dano", Age = 36, PictureUrl = "https://resizing.flixster.com/1PQhbMray969ia5n7JHLBO3qATA=/506x652/v2/https://flxt.tmsimg.com/v9/AllPhotos/267214/267214_v9_ba.jpg" },
-                    new Role { FullName = "Mat Reeves", Age = 55, PictureUrl = "https://i.dailymail.co.uk/1s/2020/04/10/05/27028708-0-image-a-2_1586494056548.jpg" },
-                    new Role { FullName = "Margot Robbie", Age = 30, PictureUrl = "https://hips.hearstapps.com/elleuk.cdnds.net/18/10/1520210874-gettyimages-927252130.jpg?crop=0.988xw:0.658xh;0.0119xw,0.0691xh&resize=640:*" },
-                    new Role { FullName = "Pete Davidson", Age = 27, PictureUrl = "https://media.nu.nl/m/ansxdkraedri_sqr256.jpg/pete-davidson-vertelt-nieuwe-liefdes-meteen-over-eigenaardigheden.jpg" },
-                    new Role { FullName = "John Cena", Age = 44, PictureUrl = "https://ichef.bbci.co.uk/news/976/cpsprodpb/2536/production/_118662590_cena2.jpg" },
-                    new Role { FullName = "James Gunn", Age = 50, PictureUrl = "https://ichef.bbci.co.uk/news/976/cpsprodpb/22F5/production/_103794980_gettyimages-678895846.jpg" },
-                    new Role { FullName = "Todd Phillips", Age = 50, PictureUrl = "https://i.redd.it/hwk9xgheqzm51.jpg" },
-                    new Role { FullName = "Zazie Beetz", Age = 30, PictureUrl = "https://resizing.flixster.com/t3iiAgmwNQpbDsiVNvNc8s3Zuug=/506x652/v2/https://flxt.tmsimg.com/v9/AllPhotos/981946/981946_v9_bb.jpg" },
-                    new Role { FullName = "Robert De Niro", Age = 77, PictureUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Robert_De_Niro_Cannes_2016.jpg/220px-Robert_De_Niro_Cannes_2016.jpg" },
-                    new Role { FullName = "Joaquin Phoenix", Age = 46, PictureUrl = "https://i.pinimg.com/originals/1d/2e/12/1d2e12756addc022144c4a8ac437f5c0.jpg" },
-                    new Role { FullName = "Millie Bobby Brown", Age = 17, PictureUrl = "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQhVfKxsjWZM-30ElFKfETvE1VUZyZ9OV3UcxZ_5O6hQMmawqCV" },
-                    new Role { FullName = "Alexander Skarsgård", Age = 44, PictureUrl = "https://encrypted-tbn3.gstatic.com/images?q=wn:GccTXROK8cAOBwEOohepzhbjJdpAUVQBTVOaWQ4Rtp6iR0wMLyx4W" },
-                    new Role { FullName = "Rebecca Hall", Age = 39, PictureUrl = "https://i.pinimg.com/originals/30/ac/b4/30acb4e1f6f8f0437a8fb7ceb04085db.jpg" },
-                    new Role { FullName = "Adam Wingard", Age = 38, PictureUrl = "https://encrypted-tbn2.gstatic.com/images?q=wn:GcRkWTdn0iu8DiewFAFNvOEOXtFctVTC2-fCX5LWZJN8tc8l035q" },
-                    new Role { FullName = "Mary Parent", Age = 53, PictureUrl = "https://encrypted-tbn2.gstatic.com/images?q=wn:GcTai8Ehm5_kioXJMqPfvIoFx8QwIOYsyoqUhFT0Im6FiIL1_mI_" }
+                _context.Persons.AddRange(
+                    new Person { FullName = "Robert Pattinson", Age = 35, PictureUrl = "https://i.pinimg.com/564x/8d/e3/89/8de389c84e919d3577f47118e2627d95.jpg" },
+                    new Person { FullName = "Zoë Kravitz", Age = 32, PictureUrl = "https://www.simplyceleb.com/wp-content/uploads/2020/06/Zoe-Kravitz-Filmleri.jpg" },
+                    new Person { FullName = "Paul Dano", Age = 36, PictureUrl = "https://resizing.flixster.com/1PQhbMray969ia5n7JHLBO3qATA=/506x652/v2/https://flxt.tmsimg.com/v9/AllPhotos/267214/267214_v9_ba.jpg" },
+                    new Person { FullName = "Mat Reeves", Age = 55, PictureUrl = "https://i.dailymail.co.uk/1s/2020/04/10/05/27028708-0-image-a-2_1586494056548.jpg" },
+                    new Person { FullName = "Margot Robbie", Age = 30, PictureUrl = "https://hips.hearstapps.com/elleuk.cdnds.net/18/10/1520210874-gettyimages-927252130.jpg?crop=0.988xw:0.658xh;0.0119xw,0.0691xh&resize=640:*" },
+                    new Person { FullName = "Pete Davidson", Age = 27, PictureUrl = "https://media.nu.nl/m/ansxdkraedri_sqr256.jpg/pete-davidson-vertelt-nieuwe-liefdes-meteen-over-eigenaardigheden.jpg" },
+                    new Person { FullName = "John Cena", Age = 44, PictureUrl = "https://ichef.bbci.co.uk/news/976/cpsprodpb/2536/production/_118662590_cena2.jpg" },
+                    new Person { FullName = "James Gunn", Age = 50, PictureUrl = "https://ichef.bbci.co.uk/news/976/cpsprodpb/22F5/production/_103794980_gettyimages-678895846.jpg" },
+                    new Person { FullName = "Todd Phillips", Age = 50, PictureUrl = "https://i.redd.it/hwk9xgheqzm51.jpg" },
+                    new Person { FullName = "Zazie Beetz", Age = 30, PictureUrl = "https://resizing.flixster.com/t3iiAgmwNQpbDsiVNvNc8s3Zuug=/506x652/v2/https://flxt.tmsimg.com/v9/AllPhotos/981946/981946_v9_bb.jpg" },
+                    new Person { FullName = "Robert De Niro", Age = 77, PictureUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Robert_De_Niro_Cannes_2016.jpg/220px-Robert_De_Niro_Cannes_2016.jpg" },
+                    new Person { FullName = "Joaquin Phoenix", Age = 46, PictureUrl = "https://i.pinimg.com/originals/1d/2e/12/1d2e12756addc022144c4a8ac437f5c0.jpg" },
+                    new Person { FullName = "Millie Bobby Brown", Age = 17, PictureUrl = "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQhVfKxsjWZM-30ElFKfETvE1VUZyZ9OV3UcxZ_5O6hQMmawqCV" },
+                    new Person { FullName = "Alexander Skarsgård", Age = 44, PictureUrl = "https://encrypted-tbn3.gstatic.com/images?q=wn:GccTXROK8cAOBwEOohepzhbjJdpAUVQBTVOaWQ4Rtp6iR0wMLyx4W" },
+                    new Person { FullName = "Rebecca Hall", Age = 39, PictureUrl = "https://i.pinimg.com/originals/30/ac/b4/30acb4e1f6f8f0437a8fb7ceb04085db.jpg" },
+                    new Person { FullName = "Adam Wingard", Age = 38, PictureUrl = "https://encrypted-tbn2.gstatic.com/images?q=wn:GcRkWTdn0iu8DiewFAFNvOEOXtFctVTC2-fCX5LWZJN8tc8l035q" },
+                    new Person { FullName = "Mary Parent", Age = 53, PictureUrl = "https://encrypted-tbn2.gstatic.com/images?q=wn:GcTai8Ehm5_kioXJMqPfvIoFx8QwIOYsyoqUhFT0Im6FiIL1_mI_" }
                 );
                 await _context.SaveChangesAsync();
             }
             
-            // Seed MovieRoles
-            if (!_context.MovieRoles.Any())
+            // Seed MoviePersons
+            if (!_context.MoviePersons.Any())
             {
-                _context.MovieRoles.AddRange(
-                    new MovieRole { MovieId = 1, RoleId = 13, RoleType = RoleType.Cast },
-                    new MovieRole { MovieId = 1, RoleId = 14, RoleType = RoleType.Cast },
-                    new MovieRole { MovieId = 1, RoleId = 15, RoleType = RoleType.Cast },
-                    new MovieRole { MovieId = 1, RoleId = 16, RoleType = RoleType.Director },
-                    new MovieRole { MovieId = 1, RoleId = 17, RoleType = RoleType.Producer },
-                    new MovieRole { MovieId = 2, RoleId = 9, RoleType = RoleType.Director },
-                    new MovieRole { MovieId = 2, RoleId = 10, RoleType = RoleType.Cast },
-                    new MovieRole { MovieId = 2, RoleId = 11, RoleType = RoleType.Cast },
-                    new MovieRole { MovieId = 2, RoleId = 14, RoleType = RoleType.Cast },
-                    new MovieRole { MovieId = 3, RoleId = 5, RoleType = RoleType.Cast },
-                    new MovieRole { MovieId = 3, RoleId = 6, RoleType = RoleType.Cast },
-                    new MovieRole { MovieId = 3, RoleId = 7, RoleType = RoleType.Cast },
-                    new MovieRole { MovieId = 3, RoleId = 8, RoleType = RoleType.Director },
-                    new MovieRole { MovieId = 4, RoleId = 1, RoleType = RoleType.Cast },
-                    new MovieRole { MovieId = 4, RoleId = 2, RoleType = RoleType.Cast },
-                    new MovieRole { MovieId = 4, RoleId = 3, RoleType = RoleType.Cast },
-                    new MovieRole { MovieId = 4, RoleId = 4, RoleType = RoleType.Director }
+                _context.MoviePersons.AddRange(
+                    new MoviePerson { MovieId = 1, PersonId = 13, RoleType = RoleType.Cast },
+                    new MoviePerson { MovieId = 1, PersonId = 14, RoleType = RoleType.Cast },
+                    new MoviePerson { MovieId = 1, PersonId = 15, RoleType = RoleType.Cast },
+                    new MoviePerson { MovieId = 1, PersonId = 16, RoleType = RoleType.Director },
+                    new MoviePerson { MovieId = 1, PersonId = 17, RoleType = RoleType.Producer },
+                    new MoviePerson { MovieId = 2, PersonId = 9, RoleType = RoleType.Director },
+                    new MoviePerson { MovieId = 2, PersonId = 10, RoleType = RoleType.Cast },
+                    new MoviePerson { MovieId = 2, PersonId = 11, RoleType = RoleType.Cast },
+                    new MoviePerson { MovieId = 2, PersonId = 14, RoleType = RoleType.Cast },
+                    new MoviePerson { MovieId = 3, PersonId = 5, RoleType = RoleType.Cast },
+                    new MoviePerson { MovieId = 3, PersonId = 6, RoleType = RoleType.Cast },
+                    new MoviePerson { MovieId = 3, PersonId = 7, RoleType = RoleType.Cast },
+                    new MoviePerson { MovieId = 3, PersonId = 8, RoleType = RoleType.Director },
+                    new MoviePerson { MovieId = 4, PersonId = 1, RoleType = RoleType.Cast },
+                    new MoviePerson { MovieId = 4, PersonId = 2, RoleType = RoleType.Cast },
+                    new MoviePerson { MovieId = 4, PersonId = 3, RoleType = RoleType.Cast },
+                    new MoviePerson { MovieId = 4, PersonId = 4, RoleType = RoleType.Director }
                 );
                 await _context.SaveChangesAsync();
             }
