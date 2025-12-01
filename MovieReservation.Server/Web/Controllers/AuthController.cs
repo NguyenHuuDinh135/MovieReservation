@@ -64,12 +64,32 @@ namespace MovieReservation.Server.Controllers
         }
 
         [HttpPost("refresh-token")]
-        public async Task<IActionResult> Refresh([FromBody] RefreshTokenCommand command)
+        public async Task<IActionResult> Refresh([FromBody] RefreshTokenCommand? command)
         {
-            // try catch có thể được thêm vào để xử lý lỗi và trả về mã trạng thái phù hợp
+            // Hỗ trợ hai luồng client:
+            // 1) Client gửi refresh token trong body dưới dạng { refreshToken: '...' }
+            // 2) Client dựa vào cookie HttpOnly 'refreshToken' (ưu tiên cho bảo mật)
             try
             {
-                var result = await _mediator.Send(command);
+                var refreshToken = command?.RefreshToken;
+
+                // Nếu không có trong body, kiểm tra cookie
+                if (string.IsNullOrEmpty(refreshToken))
+                {
+                    refreshToken = Request.Cookies["refreshToken"];
+                }
+
+                if (string.IsNullOrEmpty(refreshToken))
+                {
+                    return BadRequest(new
+                    {
+                        message = "Refresh token not provided.",
+                        succeeded = false
+                    });
+                }
+
+                // Chuyển tiếp một lệnh cụ thể được tạo từ token đã xác định
+                var result = await _mediator.Send(new RefreshTokenCommand(refreshToken));
                 return Ok(new
                 {
                     message = "Làm mới token thành công.",
