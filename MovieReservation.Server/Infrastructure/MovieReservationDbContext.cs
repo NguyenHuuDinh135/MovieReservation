@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 namespace MovieReservation.Server.Infrastructure
 {
@@ -11,8 +11,8 @@ namespace MovieReservation.Server.Infrastructure
         public DbSet<Movie> Movies { get; set; }
         public DbSet<Genre> Genres { get; set; }
         public DbSet<MovieGenre> MovieGenres { get; set; }
-        public DbSet<MovieRole> MovieRoles { get; set; }
-        public new DbSet<Role> Roles { get; set; }
+        public DbSet<MoviePerson> MoviePersons { get; set; }
+        public DbSet<Person> Persons { get; set; }
         public DbSet<Theater> Theaters { get; set; }
         public DbSet<TheaterSeat> TheaterSeats { get; set; }
         public DbSet<Payment> Payments { get; set; }
@@ -23,7 +23,7 @@ namespace MovieReservation.Server.Infrastructure
             base.OnModelCreating(modelBuilder);
             // Composite keys
             modelBuilder.Entity<MovieGenre>().HasKey(mg => new { mg.MovieId, mg.GenreId });
-            modelBuilder.Entity<MovieRole>().HasKey(mr => new { mr.MovieId, mr.RoleId });
+            modelBuilder.Entity<MoviePerson>().HasKey(mr => new { mr.MovieId, mr.PersonId });
             modelBuilder.Entity<TheaterSeat>().HasKey(ts => new { ts.SeatRow, ts.SeatNumber, ts.TheaterId });
             //modelBuilder.Entity<OtpCode>().HasKey(o => o.UserId);
 

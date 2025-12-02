@@ -11,8 +11,8 @@ using MovieReservation.Server.Application.Genres.Commands.DeleteGenre;
 using MovieReservation.Server.Application.Genres.Commands.UpdateGenre;
 using MovieReservation.Server.Application.Common.Exceptions;
 using MovieReservation.Server.Application.Genres.Commands.CreateGenre;
-using MovieReservation.Server.Application.Genres.Commands.DeleteGenre;
 using MovieReservation.Server.Application.Genres.Queries.GetGenreByMovie;
+using MovieReservation.Server.Infrastructure.Authorization;
 
 namespace MovieReservation.Server.Web.Controllers
 {
@@ -20,7 +20,7 @@ namespace MovieReservation.Server.Web.Controllers
     [Route("api/[controller]")]
     public class GenreController : BaseController
     {
-        // [Authorize(Roles = "Admin")] 
+        [RequirePermission(PermissionConstants.Permissions.GenresView)]
         [HttpGet("all")]
         public async Task<ActionResult<List<GetGenresQuery>>> GetAllGenres()
         {
@@ -39,7 +39,7 @@ namespace MovieReservation.Server.Web.Controllers
             }
         }
 
-        // [Authorize(Roles = "Admin,User")]
+        [RequirePermission(PermissionConstants.Permissions.GenresView)]
         [HttpGet("id/{id:int}")]
         public async Task<ActionResult<GenreByIdDto>> GetGenreById(int id)
         {
@@ -62,7 +62,7 @@ namespace MovieReservation.Server.Web.Controllers
             }
         }
 
-        // [Authorize(Role = "Admin, User")]
+        [RequirePermission(PermissionConstants.Permissions.GenresView)]
         [HttpGet("movies/{id}")]
         public async Task<ActionResult<List<GenresByMovieDto>>> GetGenresByMovie(int id)
         {
@@ -70,21 +70,21 @@ namespace MovieReservation.Server.Web.Controllers
             return Ok(result);
         }
 
-        // [Authorize(Role = "Admin"]
+        [RequirePermission(PermissionConstants.Permissions.GenresCreate)]
         [HttpPost("create")]
         public async Task<ActionResult<int>> CreateGenre(CreateGenreCommand command) {
             var result = await Sender.Send(command);
             return Ok(result); 
         }
 
-        // [Authorize(Role = "Admin")]
+        [RequirePermission(PermissionConstants.Permissions.GenresEdit)]
         [HttpPut("update")]
         public async Task<ActionResult<int>> UpdateGenre(UpdateGenreCommand command) {
             await Sender.Send(command);
             return NoContent(); // 204
         }
 
-        // [Authorize(Roles = "Admin")]
+        [RequirePermission(PermissionConstants.Permissions.GenresDelete)]
         [HttpDelete("delete/{id:int}")]
         public async Task<ActionResult> DeleteGenre(DeleteGenreCommand command)
         {

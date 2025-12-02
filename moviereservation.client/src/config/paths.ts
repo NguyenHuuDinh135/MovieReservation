@@ -6,19 +6,19 @@ export const paths = {
 
   auth: {
     register: {
-      path: '/register',
+      path: '/auth/register',
       getHref: (redirectTo?: string | null | undefined) =>
-        `/register${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`,
+        `/auth/register${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`,
     },
     login: {
-      path: '/login',
+      path: '/auth/login',
       getHref: (redirectTo?: string | null | undefined) =>
-        `/login${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`,
+        `/auth/login${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`,
     },
     otp: {
-      path: '/verify-otp',
+      path: '/auth/verify-otp',
       getHref: (redirectTo?: string | null | undefined) =>
-        `/verify-otp${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`,
+        `/auth/verify-otp${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`,
     }
   },
 
@@ -30,6 +30,41 @@ export const paths = {
     dashboard: {
       path: '',
       getHref: () => '/app',
+    },
+  },
+
+  admin: {
+    root: {
+      path: '/admin',
+      getHref: () => '/admin',
+    },
+    dashboard: {
+      path: '/admin/dashboard',
+      getHref: () => '/admin/dashboard',
+    },
+    movies: {
+      path: '/admin/movies',
+      getHref: () => '/admin/movies',
+    },
+    cinemas: {
+      path: '/admin/cinemas',
+      getHref: () => '/admin/cinemas',
+    },
+    showtimes: {
+      path: '/admin/showtimes',
+      getHref: () => '/admin/showtimes',
+    },
+    bookings: {
+      path: '/admin/bookings',
+      getHref: () => '/admin/bookings',
+    },
+    users: {
+      path: '/admin/users',
+      getHref: () => '/admin/users',
+    },
+    settings: {
+      path: '/admin/settings',
+      getHref: () => '/admin/settings',
     },
   }
 } as const;

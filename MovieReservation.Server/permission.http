@@ -1,0 +1,70 @@
+@MovieReservation.Server_HostAddress = http://localhost:5178
+@AuthToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyYjZkZmI1Ni04YTRkLTRkZjctOGI5Zi1iMmQwYTE4YmI1OGUiLCJlbWFpbCI6ImRpbmhrbmQzQGdtYWlsLmNvbSIsImp0aSI6IjdiNWQ1YmM4LTA5NzAtNGMxMC1hZjg4LTQ4ODI1OGVmZTE5YyIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFwaVVzZXIiLCJwZXJtaXNzaW9uIjoiUGVybWlzc2lvbi5QYXltZW50cy5WaWV3IiwiZXhwIjoxNzYzODgzOTgwLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUxNzgiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjUxNzMifQ.r6pLejGXPVFuvFPVoUdxAhRfq1RSyX6rKan8MKKTr8I
+
+###
+# Lưu ý: set giá trị {{AuthToken}} = access token (Bearer). Nếu chưa có token, thực hiện flow đăng nhập/verify-otp để lấy token.
+###
+
+### Get current user's permissions
+GET {{MovieReservation.Server_HostAddress}}/api/permissions/me
+Authorization: Bearer {{AuthToken}}
+Accept: application/json
+
+###
+
+### Get permissions of a role (replace {roleId})
+GET {{MovieReservation.Server_HostAddress}}/api/permissions/roles/{roleId}
+Authorization: Bearer {{AuthToken}}
+Accept: application/json
+
+###
+### Add permission to a role
+POST {{MovieReservation.Server_HostAddress}}/api/permissions/roles/{roleId}
+Authorization: Bearer {{AuthToken}}
+Content-Type: application/json
+
+{
+  "permission": "Permission.Payments.Create"
+}
+
+###
+
+### Remove permission from a role
+DELETE {{MovieReservation.Server_HostAddress}}/api/permissions/roles/{roleId}
+Authorization: Bearer {{AuthToken}}
+Content-Type: application/json
+
+{
+  "permission": "Permission.Payments.Create"
+}
+
+###
+
+### Get permissions of a user (example seeded user id)
+GET {{MovieReservation.Server_HostAddress}}/api/permissions/users/2b6dfb56-8a4d-4df7-8b9f-b2d0a18bb58e
+Authorization: Bearer {{AuthToken}}
+Accept: application/json
+
+###
+
+### Add permission to a user
+POST {{MovieReservation.Server_HostAddress}}/api/permissions/users/2b6dfb56-8a4d-4df7-8b9f-b2d0a18bb58e
+Authorization: Bearer {{AuthToken}}
+Content-Type: application/json
+
+{
+  "permission": "Permission.Payments.View"
+}
+
+###
+
+### Remove permission from a user
+DELETE {{MovieReservation.Server_HostAddress}}/api/permissions/users/2b6dfb56-8a4d-4df7-8b9f-b2d0a18bb58e
+Authorization: Bearer {{AuthToken}}
+Content-Type: application/json
+
+{
+  "permission": "Permission.Payments.View"
+}
+
+###

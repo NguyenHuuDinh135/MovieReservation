@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using MovieReservation.Server.Application.Common.Interfaces;
+using MovieReservation.Server.Infrastructure.Authorization;
 using MovieReservation.Server.Infrastructure.Services;
 using StackExchange.Redis;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace MovieReservation.Server.Infrastructure
 {
@@ -46,6 +49,7 @@ namespace MovieReservation.Server.Infrastructure
             .AddJwtBearer(options =>
             {
                 options.SaveToken = true;
+                options.MapInboundClaims = false; // Giữ nguyên claim types từ token
                 options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                 {
                     ClockSkew = TimeSpan.Zero, // Không cho phép trễ hạn
@@ -56,10 +60,27 @@ namespace MovieReservation.Server.Infrastructure
                     ValidIssuer = builder.Configuration["Jwt:Issuer"],
                     ValidAudience = builder.Configuration["Jwt:Audience"],
                     IssuerSigningKey = new SymmetricSecurityKey(
-                        System.Text.Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Secret"]))
+                        System.Text.Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Secret"])),
+                    // Map tất cả claims từ JWT token vào ClaimsPrincipal
+                    // MapInboundClaims = false, // Giữ nguyên claim types từ token
+                    NameClaimType = ClaimTypes.NameIdentifier,
+                    RoleClaimType = ClaimTypes.Role
+                };
+                
+                // Đảm bảo tất cả claims từ token được map vào User
+                options.Events = new JwtBearerEvents
+                {
+                    OnTokenValidated = context =>
+                    {
+                        // Claims đã được map tự động vào context.Principal
+                        // RequirePermissionAttribute sẽ kiểm tra claims từ context.Principal
+                        return Task.CompletedTask;
+                    }
                 };
             });
 
+            // Authorization được xử lý bởi RequirePermissionAttribute (IAsyncAuthorizationFilter)
+            // Không cần đăng ký policies vì attribute tự kiểm tra permissions từ claims
             builder.Services.AddAuthorization();
 
             //custom services

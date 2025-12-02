@@ -1,5 +1,10 @@
-import axios, { AxiosError, type AxiosInstance, type AxiosRequestConfig } from 'axios'
-import { getAccessToken, setAccessToken, clearAccessToken } from './auth'
+import axios, { AxiosError, type AxiosInstance, type AxiosRequestConfig, type InternalAxiosRequestConfig } from 'axios'
+import { getAccessToken, setAccessToken, clearAllAuthData } from './auth'
+
+// Extend type to include _retry property
+interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
+  _retry?: boolean
+}
 
 type QueueItem = {
   resolve: (value?: unknown) => void
@@ -7,9 +12,19 @@ type QueueItem = {
   config: AxiosRequestConfig
 }
 
+// Main API instance — có interceptor
 const api: AxiosInstance = axios.create({
   baseURL: '/api',
-  withCredentials: true, // send HttpOnly refresh cookie to server
+  withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+})
+
+// Axios riêng cho refresh — KHÔNG có interceptor
+const refreshApi: AxiosInstance = axios.create({
+  baseURL: '/api',
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json'
   }
@@ -32,7 +47,7 @@ const processQueue = (error: unknown, token: string | null = null) => {
   failedQueue = []
 }
 
-// Attach access token
+// Attach access token (CHỈ chạy cho api, KHÔNG chạy cho refreshApi)
 api.interceptors.request.use((config) => {
   const token = getAccessToken()
   if (token && config.headers) {
@@ -45,18 +60,19 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
-    const originalRequest = error.config
+    const originalRequest = error.config as CustomAxiosRequestConfig
 
-    if (!originalRequest) {
-      return Promise.reject(error)
-    }
+    if (!originalRequest) return Promise.reject(error)
 
-    // Prevent infinite loop and handle only 401
-    if ((error.response?.status === 401 || (error.response?.status === 400 && (error.response?.data as any)?.message?.toLowerCase?.()?.includes('token'))) && !originalRequest._retry) {
-      originalRequest._retry = true as any
+    const isTokenExpired =
+      error.response?.status === 401 ||
+      (error.response?.status === 400 && (error.response?.data as any)?.message?.toLowerCase?.()?.includes('token'))
 
+    if (isTokenExpired && !originalRequest._retry) {
+      originalRequest._retry = true
+
+      // Nếu đang refresh → đưa vào queue
       if (isRefreshing) {
-        // queue the request until refresh completes
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject, config: originalRequest })
         })
@@ -65,25 +81,28 @@ api.interceptors.response.use(
       isRefreshing = true
 
       try {
-        // call refresh endpoint; withCredentials is true so server can read the HttpOnly cookie
-        const refreshResponse = await api.post('/auth/refresh-token', {}, { withCredentials: true })
+        // Refresh bằng axios riêng — không có Authorization
+        const refreshResponse = await refreshApi.post('/auth/refresh-token')
 
-        // Backend returns shape: { message, succeeded, data: { accessToken, expiresIn } } OR data.accessToken
         const newToken =
-          (refreshResponse.data && (refreshResponse.data.data?.accessToken || refreshResponse.data.data?.AccessToken)) ||
-          (refreshResponse.data?.accessToken || refreshResponse.data?.AccessToken) ||
+          refreshResponse.data?.data?.accessToken ||
+          refreshResponse.data?.data?.AccessToken ||
+          refreshResponse.data?.accessToken ||
+          refreshResponse.data?.AccessToken ||
           null
 
         if (!newToken) {
           throw new Error('No access token returned from refresh.')
         }
 
+        // Lưu token mới
         setAccessToken(newToken)
 
+        // Giải queue
         processQueue(null, newToken)
         isRefreshing = false
 
-        // update original request header and retry
+        // Retry lại request gốc
         if (originalRequest.headers) {
           originalRequest.headers['Authorization'] = `Bearer ${newToken}`
         }
@@ -91,12 +110,11 @@ api.interceptors.response.use(
       } catch (refreshError) {
         processQueue(refreshError, null)
         isRefreshing = false
-        // clear tokens and redirect to login
-        clearAccessToken()
-        try {
-          // optional: navigate to login page
-          window.location.href = '/auth/login'
-        } catch {}
+
+        console.error('Refresh token failed:', refreshError)
+        clearAllAuthData()
+        window.location.href = '/auth/login'
+
         return Promise.reject(refreshError)
       }
     }

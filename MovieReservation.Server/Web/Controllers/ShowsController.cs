@@ -8,6 +8,7 @@ using MovieReservation.Server.Application.Shows.Queries;
 using MovieReservation.Server.Application.Shows.Queries.GetFilteredShows; // hoặc GetShows, GetShowById, v.v.
 using MovieReservation.Server.Application.Shows.Queries.GetShows;
 using MovieReservation.Server.Web.Controllers; // Nếu BaseController ở đây
+using MovieReservation.Server.Infrastructure.Authorization;
 
 namespace MovieReservation.Server.Web.Controllers
 {
@@ -15,7 +16,7 @@ namespace MovieReservation.Server.Web.Controllers
     [Route("api/[controller]")]
     public class ShowsController : BaseController // hoặc ControllerBase nếu không dùng MediatR Sender
     {
-        // [Authorize(Roles = "Admin")]
+        [RequirePermission(PermissionConstants.Permissions.ShowsView)]
         [HttpGet("all")]
         public async Task<ActionResult<List<ShowsDto>>> GetAllShows()
         {
@@ -34,7 +35,7 @@ namespace MovieReservation.Server.Web.Controllers
             }
         }
 
-        // [Authorize(Roles = "Admin,User")]
+        [RequirePermission(PermissionConstants.Permissions.ShowsView)]
         [HttpGet("id/{id:int}")]
         public async Task<ActionResult<ShowsDto>> GetShowById(int id)
         {
@@ -62,7 +63,7 @@ namespace MovieReservation.Server.Web.Controllers
             }
         }
 
-        // [Authorize(Roles = "Admin")]
+        [RequirePermission(PermissionConstants.Permissions.ShowsView)]
         [HttpGet("filters")] // endpoint tương ứng với curl bạn đã cung cấp
         public async Task<ActionResult<object>> GetFilteredShows([FromQuery] DateTime date)
         {
@@ -84,7 +85,7 @@ namespace MovieReservation.Server.Web.Controllers
             }
         }
 
-        // [Authorize(Roles = "Admin")]
+        [RequirePermission(PermissionConstants.Permissions.ShowsCreate)]
         [HttpPost("create")]
         public async Task<ActionResult<int>> CreateShow(CreateShowCommand command)
         {
@@ -103,7 +104,7 @@ namespace MovieReservation.Server.Web.Controllers
             }
         }
 
-        // [Authorize(Roles = "Admin")]
+        [RequirePermission(PermissionConstants.Permissions.ShowsEdit)]
         [HttpPut("update")]
         public async Task<ActionResult<Unit>> UpdateShow(UpdateShowCommand command)
         {
@@ -126,7 +127,7 @@ namespace MovieReservation.Server.Web.Controllers
             }
         }
 
-        // [Authorize(Roles = "Admin")] // Bỏ comment nếu cần xác thực vai trò
+        [RequirePermission(PermissionConstants.Permissions.ShowsDelete)]
         [HttpDelete("id/{id:int}")]
         public async Task<ActionResult> DeleteShow(int id)
         {

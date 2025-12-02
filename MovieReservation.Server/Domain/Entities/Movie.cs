@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using MovieReservation.Server.Domain.Enums;
 
 namespace MovieReservation.Server.Domain.Entities
@@ -15,6 +15,6 @@ namespace MovieReservation.Server.Domain.Entities
 
         public ICollection<Show> Shows { get; set; } = new List<Show>();
         public ICollection<MovieGenre> MovieGenres { get; set; } = new List<MovieGenre>();
-        public ICollection<MovieRole> MovieRoles { get; set; } = new List<MovieRole>();
+        public ICollection<MoviePerson> MoviePersons { get; set; } = new List<MoviePerson>();
     }
 }

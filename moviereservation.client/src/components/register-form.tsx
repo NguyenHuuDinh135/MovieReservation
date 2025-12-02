@@ -38,7 +38,7 @@ export function RegisterForm({
     setIsLoading(true)
     try {
       const res = await apiClient.auth.register({
-        userName: (data as any).userName ?? (data as any).username ?? "",
+        userName: (data as any).name ?? (data as any).username ?? "",
         email: (data as any).email,
         password: (data as any).password,
       })
@@ -80,9 +80,9 @@ export function RegisterForm({
 
           <div className="flex flex-col gap-6">
             <div className="grid gap-3">
-              <Label htmlFor="userName">Username</Label>
-              <Input id="userName" {...register("userName" as any)} placeholder="johndoe" required />
-              {errors?.userName && <p className="px-1 text-xs text-red-600">{(errors as any).userName?.message}</p>}
+              <Label htmlFor="name">Username</Label>
+              <Input id="name" {...register("name" as any)} placeholder="johndoe" required />
+              {errors?.name && <p className="px-1 text-xs text-red-600">{(errors as any).name?.message}</p>}
             </div>
 
             <div className="grid gap-3">

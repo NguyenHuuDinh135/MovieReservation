@@ -7,28 +7,28 @@ using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using MovieReservation.Server.Application.Common.Exceptions;
 
-namespace MovieReservation.Server.Application.Movies.Queries.GetRolesForMovie
+namespace MovieReservation.Server.Application.Movies.Queries.GetPersonForMovie
 {
-    public record GetRolesForMovieQuery : IRequest<RolesForMovieDto>
+    public record GetPersonForMovieQuery : IRequest<PersonsForMovieDto>
     {
         public int Id { get; init; }
     }
-    public class GetRolesForMovieQueryHandler(IMovieReservationDbContext context, IMapper mapper) : IRequestHandler<GetRolesForMovieQuery, RolesForMovieDto>
+    public class GetPersonForMovieQueryHandler(IMovieReservationDbContext context, IMapper mapper) : IRequestHandler<GetPersonForMovieQuery, PersonsForMovieDto>
     {
         private readonly IMovieReservationDbContext _context = context;
         private readonly IMapper _mapper = mapper;
 
-        public async Task<RolesForMovieDto> Handle(GetRolesForMovieQuery request, CancellationToken cancellationToken)
+        public async Task<PersonsForMovieDto> Handle(GetPersonForMovieQuery request, CancellationToken cancellationToken)
         {
-            var rolesForMovie = await _context.Movies
+            var personForMovie = await _context.Movies
                 .AsNoTracking()
                 .Where(m => m.Id == request.Id)
-                .ProjectTo<RolesForMovieDto>(_mapper.ConfigurationProvider)
+                .ProjectTo<PersonsForMovieDto>(_mapper.ConfigurationProvider)
                 .FirstOrDefaultAsync(cancellationToken);
 
-            if (rolesForMovie == null) throw new NotFoundException($"Roles for Movie Id {request.Id} not found.");
+            if (personForMovie == null) throw new NotFoundException($"Person for Movie Id {request.Id} not found.");
 
-            return rolesForMovie;
+            return personForMovie;
         }
     }
 }

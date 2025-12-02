@@ -7,8 +7,9 @@ using MovieReservation.Server.Application.Movies.Queries;
 using MovieReservation.Server.Application.Movies.Queries.GetFilteredMovies;
 using MovieReservation.Server.Application.Movies.Queries.GetMovieById;
 using MovieReservation.Server.Application.Movies.Queries.GetMovies;
-using MovieReservation.Server.Application.Movies.Queries.GetRolesForMovie;
+using MovieReservation.Server.Application.Movies.Queries.GetPersonForMovie;
 using MovieReservation.Server.Web.Controllers;
+using MovieReservation.Server.Infrastructure.Authorization;
 
 namespace MovieReservation.Server.Controllers
 {
@@ -17,7 +18,7 @@ namespace MovieReservation.Server.Controllers
     public class MoviesController : BaseController
     {
 
-        // [Authorize]
+        [RequirePermission(PermissionConstants.Permissions.MoviesView)]
         [HttpGet("all")]
         public async Task<ActionResult<List<MovieDto>>> GetAll()
         {
@@ -26,7 +27,7 @@ namespace MovieReservation.Server.Controllers
             return Ok(result);
         }
 
-        // [Authorize]
+        [RequirePermission(PermissionConstants.Permissions.MoviesView)]
         [HttpGet("id/{id:int}")]
         public async Task<ActionResult<MovieDto>> GetById(int id)
         {
@@ -35,7 +36,7 @@ namespace MovieReservation.Server.Controllers
             return Ok(result);
         }
 
-        // [Authorize]
+        [RequirePermission(PermissionConstants.Permissions.MoviesView)]
         [HttpGet("filtered")]
         public async Task<ActionResult<FilteredMoviesDto>> GetFilterd([FromQuery] FilteredMoviesQuery command)
         {
@@ -44,16 +45,16 @@ namespace MovieReservation.Server.Controllers
             return Ok(result);
         }
 
-        // [Authorize]
-        [HttpGet("id/{id:int}/roles")]
-        public async Task<ActionResult<RolesForMovieDto>> GetRolesById(int id)
+        [RequirePermission(PermissionConstants.Permissions.MoviesView)]
+        [HttpGet("id/{id:int}/persons")]
+        public async Task<ActionResult<PersonsForMovieDto>> GetPersonsById(int id)
         {
-            var result = await Sender.Send(new GetRolesForMovieQuery { Id = id });
+            var result = await Sender.Send(new GetPersonForMovieQuery { Id = id });
 
             return Ok(result);
         }
 
-        // [Authorize]
+        [RequirePermission(PermissionConstants.Permissions.MoviesCreate)]
         [HttpPost("create")]
         public async Task<IActionResult> Create(CreateMovieCommand command)
         {
@@ -62,7 +63,7 @@ namespace MovieReservation.Server.Controllers
             return Ok(result);
         }
 
-        // [Authorize]
+        [RequirePermission(PermissionConstants.Permissions.MoviesEdit)]
         [HttpPut("update")]
         public async Task<IActionResult> Update(UpdateMovieCommand command)
         {
@@ -71,7 +72,7 @@ namespace MovieReservation.Server.Controllers
             return NoContent();
         }
 
-        // [Authorize]
+        [RequirePermission(PermissionConstants.Permissions.MoviesDelete)]
         [HttpDelete("delete/id/{id:int}")]
         public async Task<IActionResult> Delete(int id)
         {
